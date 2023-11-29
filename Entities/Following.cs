@@ -8,9 +8,9 @@ namespace Entities
 {
     public class Following
     {
-        public Guid followerID {get; set; }
+        public Guid FollowerID {get; set; }
 
-        public Guid followingID { get; set; }
+        public Guid FollowingID { get; set; }
 
         //followingID follows followerID.
 
@@ -27,7 +27,7 @@ namespace Entities
             }
             Following cFollowing = (Following)obj;
 
-            return followerID == cFollowing.followerID && followingID == cFollowing.followingID;
+            return FollowerID == cFollowing.FollowerID && FollowingID == cFollowing.FollowingID;
         }
 
 
