@@ -92,5 +92,10 @@ namespace Services
             }
             return true;
         }
+
+        public bool ValidateID(Guid userID)
+        {
+            return dbUsers.FindIndex(a => a.UserID == userID) != -1;
+        }
     }
 }

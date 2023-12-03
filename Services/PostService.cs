@@ -9,7 +9,18 @@ namespace Services
 {
     public class PostService
     {
+        //all of this might be useless code keeping it just in case
         private List<Post> dbPosts;
+        private readonly SalePostService _salePostService;
+        private readonly SocialMediaPostService _socialMediaPostService;
+
+        public PostService(SalePostService salePostService, SocialMediaPostService socialMediaPostService)
+        { 
+            _salePostService = salePostService;
+            _socialMediaPostService = socialMediaPostService;
+        }
+
+
 
         public Post? GetPostByPostID(Guid postID)
         {
@@ -24,5 +35,6 @@ namespace Services
 
             return postList;
         }
+
     }
 }
