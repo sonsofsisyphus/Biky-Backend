@@ -11,6 +11,12 @@ namespace Services
     public class SalePostService
     {
         private List<SalePost> dbSalePosts;
+        UserService _userService;
+
+        public SalePostService(UserService userService)
+        {
+            _userService = userService;
+        }
         public SalePost? GetPostByPostID(Guid postID)
         {
             SalePost? post = dbSalePosts.FirstOrDefault(post => post.PostID == postID);
@@ -23,6 +29,11 @@ namespace Services
             var postList = dbSalePosts.Where(post => post.AuthorID == userID).ToList();
 
             return postList;
+        }
+
+        public List<SalePost> GetAllFeed()
+        {
+            return dbSalePosts.OrderByDescending(item => item.PostTime).ToList();
         }
 
         //add user validation for post ids

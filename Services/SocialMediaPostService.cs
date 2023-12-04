@@ -1,6 +1,7 @@
 ﻿using Entities;
 using Services.DTO;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,6 +12,12 @@ namespace Services
     public class SocialMediaPostService
     {
         private List<SocialMediaPost> dbSocialMediaPosts;
+        UserService _userService;
+
+        public SocialMediaPostService(UserService userService)
+        {
+            _userService = userService;
+        }
 
         public SocialMediaPost? GetPostByPostID(Guid postID)
         {
@@ -24,6 +31,19 @@ namespace Services
             var postList = dbSocialMediaPosts.Where(post => post.AuthorID == userID).ToList();
 
             return postList;
+        }
+
+        public List<SocialMediaPost> GetAllFeed()
+        {
+            return dbSocialMediaPosts.OrderByDescending(item => item.PostTime).ToList();
+        }
+
+        public List<SocialMediaPost> GetFollowingsFeed(Guid UserID)
+        {
+            List<Guid> followings = _userService.GetFollowingsByID(UserID);
+            return dbSocialMediaPosts.
+                Where(item => followings.Contains(item.AuthorID)).
+                OrderByDescending(item => item.PostTime).ToList();
         }
 
         //add user validation for post ids
