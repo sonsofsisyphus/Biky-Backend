@@ -30,6 +30,7 @@ namespace Services
         public Guid AddPost(SocialMediaPostAddRequest socialMediaPostRequest)
         {
             var post = socialMediaPostRequest.ToSocialMediaPost();
+
             dbSocialMediaPosts.Add(post);
             return post.PostID;
         }
@@ -69,6 +70,11 @@ namespace Services
         {
             var index = dbSocialMediaPosts.FindIndex(a => a.PostID == like.PostID);
             dbSocialMediaPosts[index].LikeCount--;
+        }
+
+        public Guid PostOwner(Guid postID)
+        {
+            return dbSocialMediaPosts.FirstOrDefault(a => a.PostID == postID).AuthorID;
         }
     }
 }

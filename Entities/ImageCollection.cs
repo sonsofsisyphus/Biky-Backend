@@ -8,10 +8,10 @@ namespace Entities
 {
     public class ImageCollection
     { 
-        Guid Image1 { get; set; }
-        Guid Image2 { get; set; }
-        Guid Image3 { get; set; }
-        Guid Image4 { get; set; }
+        String Image1 { get; set; }
+        String Image2 { get; set; }
+        String Image3 { get; set; }
+        String Image4 { get; set; }
 
     }
 }

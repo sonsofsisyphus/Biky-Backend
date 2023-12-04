@@ -41,6 +41,11 @@ namespace Services
                 FollowingID = Guid.Parse("2cd9834f-6911-44a8-8080-7a313867ff0f")
             }
         };
+        private NotificationService _notificationService;
+        public UserService(NotificationService notificationService)
+        {
+            _notificationService = notificationService;
+        }
 
         public User? GetUserByID(Guid userID)
         {
@@ -67,9 +72,24 @@ namespace Services
         {
             if(ValidateFollowing(following))
             {
+                _notificationService.AddNotification(new DTO.NotificationAddRequest()
+                {
+                    NotificationType = NotificationType.FOLLOW,
+                    ReceiverID = following.FollowerID,
+                    UserID = following.FollowingID
+
+                });
                 followings.Add(following);
             }
+        }
 
+        public void RemoveFollowing(Following following)
+        {
+            if(followings.Contains(following))
+            {
+                _notificationService.RemoveFollowNotification(following);
+                followings.Remove(following);
+            }
         }
 
         private bool ValidateFollowing(Following following)
