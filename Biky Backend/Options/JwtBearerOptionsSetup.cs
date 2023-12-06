@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Biky_Backend.Options
 {
-    public class JwtBearerOptionsSetup : IConfigureOptions<JwtBearerOptions>
+    public class JwtBearerOptionsSetup : IConfigureNamedOptions<JwtBearerOptions>
     {
         private readonly JwtOptions _jwtOptions;
 
@@ -14,6 +14,7 @@ namespace Biky_Backend.Options
         {
             _jwtOptions = jwtOptions.Value;
         }
+
         public void Configure(JwtBearerOptions options)
         {
             options.TokenValidationParameters = new()
@@ -28,5 +29,8 @@ namespace Biky_Backend.Options
                     Encoding.UTF8.GetBytes(_jwtOptions.SecretKey))
             };
         }
+
+        public void Configure(string? name, JwtBearerOptions options)
+            => Configure(options);
     }
 }

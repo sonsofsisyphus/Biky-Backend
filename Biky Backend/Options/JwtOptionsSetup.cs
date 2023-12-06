@@ -5,7 +5,7 @@ namespace Biky_Backend.Options
 {
     public class JwtOptionsSetup : IConfigureOptions<JwtOptions>
     {
-        private const string _SECTION_NAME = "JWT";
+        private const string _SECTION_NAME = "Jwt";
         private readonly IConfiguration _configuration;
 
         public JwtOptionsSetup(IConfiguration configuration) 

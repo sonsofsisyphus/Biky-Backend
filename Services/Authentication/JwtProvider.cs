@@ -21,8 +21,7 @@ namespace Services.Authentication
             var claims = new Claim[]
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.UserID.ToString()),
-                new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                new Claim(ClaimTypes.Role, "Admin") // learn how to use custom roles to distinguish different user types
+                new Claim(ClaimTypes.Role, "Admin")
             };
 
             var signingCredentials = new SigningCredentials(

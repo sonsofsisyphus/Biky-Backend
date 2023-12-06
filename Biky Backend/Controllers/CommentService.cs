@@ -29,7 +29,7 @@ namespace Biky_Backend.Controllers
         }
 
         [HttpPost]
-        [Route("Add")]
+        [Route("Edit")]
         public IActionResult EditComment([FromBody] CommentEditRequest comment)
         {
             _commentService.EditComment(comment);
