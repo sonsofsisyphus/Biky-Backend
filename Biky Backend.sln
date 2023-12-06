@@ -9,13 +9,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Biky Backend", "Biky Backen
 		{2DBACAA7-8E50-408B-8E7E-4FD495728752} = {2DBACAA7-8E50-408B-8E7E-4FD495728752}
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Entities", "Entities\Entities.csproj", "{00485FC1-A864-4CE3-AB71-E4C7E9905330}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services", "Services\Services.csproj", "{2DBACAA7-8E50-408B-8E7E-4FD495728752}"
-	ProjectSection(ProjectDependencies) = postProject
-		{00485FC1-A864-4CE3-AB71-E4C7E9905330} = {00485FC1-A864-4CE3-AB71-E4C7E9905330}
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -26,14 +19,6 @@ Global
 		{B70059F5-D19E-4AD6-A36C-E7DC95CAEB23}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B70059F5-D19E-4AD6-A36C-E7DC95CAEB23}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B70059F5-D19E-4AD6-A36C-E7DC95CAEB23}.Release|Any CPU.Build.0 = Release|Any CPU
-		{00485FC1-A864-4CE3-AB71-E4C7E9905330}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{00485FC1-A864-4CE3-AB71-E4C7E9905330}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{00485FC1-A864-4CE3-AB71-E4C7E9905330}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{00485FC1-A864-4CE3-AB71-E4C7E9905330}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2DBACAA7-8E50-408B-8E7E-4FD495728752}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2DBACAA7-8E50-408B-8E7E-4FD495728752}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2DBACAA7-8E50-408B-8E7E-4FD495728752}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2DBACAA7-8E50-408B-8E7E-4FD495728752}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
