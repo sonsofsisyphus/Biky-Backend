@@ -1,10 +1,14 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Entities
 {
     public class Follow
     {
+        [Key]
+        public Guid FollowID { get; set; }
+
         [ForeignKey("User")]
         public Guid FollowerID { get; set; }
 

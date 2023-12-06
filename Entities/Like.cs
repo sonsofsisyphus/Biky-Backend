@@ -1,10 +1,14 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Entities
 {
     public class Like
     {
+        [Key]
+        public Guid LikeID { get; set; }
+
         [ForeignKey("User")]
         public Guid UserID { get; set; }
 
