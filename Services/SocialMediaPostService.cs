@@ -1,100 +1,165 @@
 ﻿using Entities;
-using Services.DTO;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Services
 {
     public class SocialMediaPostService
     {
-        private List<SocialMediaPost> dbSocialMediaPosts;
-        UserService _userService;
+        private readonly DBConnector _dbConnector;
+        private readonly UserService _userService;
 
-        public SocialMediaPostService(UserService userService)
+        public SocialMediaPostService(DBConnector dbConnector, UserService userService)
         {
-            _userService = userService;
+            _dbConnector = dbConnector ?? throw new ArgumentNullException(nameof(dbConnector));
+            _userService = userService ?? throw new ArgumentNullException(nameof(userService));
         }
 
         public SocialMediaPost? GetPostByPostID(Guid postID)
         {
-            SocialMediaPost? post = dbSocialMediaPosts.FirstOrDefault(post => post.PostID == postID);
-
-            return post;
+            try
+            {
+                return _dbConnector.SocialMediaPosts.Find(postID);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in GetPostByPostID: {ex.Message}");
+                return null;
+            }
         }
 
         public List<SocialMediaPost> GetPostByUserID(Guid userID)
         {
-            var postList = dbSocialMediaPosts.Where(post => post.AuthorID == userID).ToList();
-
-            return postList;
+            try
+            {
+                return _dbConnector.SocialMediaPosts
+                    .Where(post => post.AuthorID == userID)
+                    .OrderByDescending(item => item.PostTime)
+                    .ToList();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in GetPostByUserID: {ex.Message}");
+                return new List<SocialMediaPost>();
+            }
         }
 
         public List<SocialMediaPost> GetAllFeed()
         {
-            return dbSocialMediaPosts.OrderByDescending(item => item.PostTime).ToList();
-        }
-
-        public List<SocialMediaPost> GetFollowingsFeed(Guid UserID)
-        {
-            List<Guid> followings = _userService.GetFollowingsByID(UserID);
-            return dbSocialMediaPosts.
-                Where(item => followings.Contains(item.AuthorID)).
-                OrderByDescending(item => item.PostTime).ToList();
-        }
-
-        //add user validation for post ids
-        public Guid AddPost(SocialMediaPostAddRequest socialMediaPostRequest)
-        {
-            var post = socialMediaPostRequest.ToSocialMediaPost();
-
-            dbSocialMediaPosts.Add(post);
-            return post.PostID;
-        }
-
-        public void UpdatePost(SocialMediaPost salePost)
-        {
-            var index = dbSocialMediaPosts.FindIndex(a => a.PostID == salePost.PostID);
-            if (index != -1)
+            try
             {
-                //add checks here for protection against tampering
-                //i.e. post time & like count
-                dbSocialMediaPosts[index] = salePost;
+                return _dbConnector.SocialMediaPosts
+                    .OrderByDescending(item => item.PostTime)
+                    .ToList();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in GetAllFeed: {ex.Message}");
+                return new List<SocialMediaPost>();
             }
         }
 
-        public void RemovePost(Guid postID)
+        public List<SocialMediaPost> GetFollowingsFeed(Guid userID)
         {
-            var index = dbSocialMediaPosts.FindIndex(a => a.PostID == postID);
-            if (index != -1)
+            try
             {
-                dbSocialMediaPosts.RemoveAt(index);
+                List<Guid> followings = _userService.GetFollowingsByID(userID);
+                return _dbConnector.SocialMediaPosts
+                    .Where(item => followings.Contains(item.AuthorID))
+                    .OrderByDescending(item => item.PostTime)
+                    .ToList();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in GetFollowingsFeed: {ex.Message}");
+                return new List<SocialMediaPost>();
+            }
+        }
+
+        public Guid AddPost(SocialMediaPost post)
+        {
+            try
+            {
+                _dbConnector.SocialMediaPosts.Add(post);
+                _dbConnector.SaveChanges();
+                return post.PostID;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in AddPost: {ex.Message}");
+                return Guid.Empty;
+            }
+        }
+
+        public Guid? UpdatePost(SocialMediaPost updatedPost)
+        {
+            try
+            {
+                var existingPost = _dbConnector.SocialMediaPosts.Find(updatedPost.PostID);
+                if (existingPost != null)
+                {
+                    existingPost.AuthorID = updatedPost.AuthorID;
+                    existingPost.ContentText = updatedPost.ContentText;
+                    existingPost.PostTime = updatedPost.PostTime;
+                    existingPost.ImagesID = updatedPost.ImagesID;
+                    existingPost.IsAnonymous = updatedPost.IsAnonymous;
+
+                    _dbConnector.SaveChanges();
+                }
+
+                return existingPost?.PostID;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in UpdatePost: {ex.Message}");
+                return null;
+            }
+        }
+
+        public bool RemovePost(Guid postID)
+        {
+            try
+            {
+                var postToRemove = _dbConnector.SocialMediaPosts.Find(postID);
+                if (postToRemove != null)
+                {
+                    _dbConnector.SocialMediaPosts.Remove(postToRemove);
+                    _dbConnector.SaveChanges();
+                    return true;
+                }
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in RemovePost: {ex.Message}");
+                return false;
             }
         }
 
         public bool ValidateID(Guid postID)
         {
-            return dbSocialMediaPosts.FindIndex(a => a.PostID == postID) != -1;
-        }
-
-        public void AddLikeToPost(Like like)
-        {
-            var index = dbSocialMediaPosts.FindIndex(a => a.PostID == like.PostID);
-            dbSocialMediaPosts[index].LikeCount++;
-        }
-
-        public void RemoveLikeFromPost(Like like)
-        {
-            var index = dbSocialMediaPosts.FindIndex(a => a.PostID == like.PostID);
-            dbSocialMediaPosts[index].LikeCount--;
+            try
+            {
+                return _dbConnector.SocialMediaPosts.Any(a => a.PostID == postID);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in ValidateID: {ex.Message}");
+                return false;
+            }
         }
 
         public Guid PostOwner(Guid postID)
         {
-            return dbSocialMediaPosts.FirstOrDefault(a => a.PostID == postID).AuthorID;
+            try
+            {
+                var post = _dbConnector.SocialMediaPosts.SingleOrDefault(a => a.PostID == postID);
+                return post?.AuthorID ?? Guid.Empty;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in PostOwner: {ex.Message}");
+                return Guid.Empty;
+            }
         }
     }
 }

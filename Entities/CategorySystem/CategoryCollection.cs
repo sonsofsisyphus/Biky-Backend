@@ -1,6 +1,7 @@
-namespace Entities.CategorySystem;
-
-public class CategoryCollection : CategoryType
+namespace Entities.CategorySystem
 {
-    public int Size { get; set; }
+    public class CategoryCollection : CategoryType
+    {
+        public int Size { get; set; }
+    }
 }

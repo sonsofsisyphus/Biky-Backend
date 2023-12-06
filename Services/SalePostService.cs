@@ -1,67 +1,124 @@
-﻿using System;
+﻿using Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Entities;
-using Services.DTO;
 
 namespace Services
 {
     public class SalePostService
     {
-        private List<SalePost> dbSalePosts;
-        UserService _userService;
+        private readonly DBConnector _dbConnector;
 
-        public SalePostService(UserService userService)
+        public SalePostService(DBConnector dbConnector)
         {
-            _userService = userService;
+            _dbConnector = dbConnector ?? throw new ArgumentNullException(nameof(dbConnector));
         }
+
         public SalePost? GetPostByPostID(Guid postID)
         {
-            SalePost? post = dbSalePosts.FirstOrDefault(post => post.PostID == postID);
-
-            return post;
+            try
+            {
+                return _dbConnector.SalePosts.FirstOrDefault(post => post.PostID == postID);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in GetPostByPostID: {ex.Message}");
+                return null;
+            }
         }
 
-        public List<SalePost> GetPostByUserID(Guid userID)
+        public List<SalePost> GetPostsByUserID(Guid userID)
         {
-            var postList = dbSalePosts.Where(post => post.AuthorID == userID).ToList();
-
-            return postList;
+            try
+            {
+                return _dbConnector.SalePosts.Where(post => post.AuthorID == userID).ToList();
+            }
+            catch (Exception ex)
+            {
+                
+                Console.WriteLine($"Error in GetPostsByUserID: {ex.Message}");
+                return new List<SalePost>();
+            }
         }
 
         public List<SalePost> GetAllFeed()
         {
-            return dbSalePosts.OrderByDescending(item => item.PostTime).ToList();
-        }
-
-        //add user validation for post ids
-        public Guid AddPost(SalePostAddRequest salePostRequest)
-        {
-            SalePost post = salePostRequest.ToSalePost();
-            dbSalePosts.Add(post);
-            return post.PostID;
-        }
-
-        public void UpdatePost(SalePost salePost)
-        {
-            var index = dbSalePosts.FindIndex(a => a.PostID == salePost.PostID);
-            if (index != -1)
+            try
             {
-                dbSalePosts[index] = salePost;
+                return _dbConnector.SalePosts.OrderByDescending(item => item.PostTime).ToList();
+            }
+            catch (Exception ex)
+            {
+                
+                Console.WriteLine($"Error in GetAllFeed: {ex.Message}");
+                return new List<SalePost>();
             }
         }
 
-        public void RemovePost(Guid postID)
+        public Guid AddPost(SalePost post)
         {
-            var index = dbSalePosts.FindIndex(a => a.PostID == postID);
-            if (index != -1)
+            try
             {
-                dbSalePosts.RemoveAt(index);
+                _dbConnector.SalePosts.Add(post);
+                _dbConnector.SaveChanges();
+                return post.PostID;
+            }
+            catch (Exception ex)
+            {
+                
+                Console.WriteLine($"Error in AddPost: {ex.Message}");
+                return Guid.Empty;
             }
         }
 
+        public Guid? UpdatePost(SalePost salePost)
+        {
+            try
+            {
+                var existingPost = _dbConnector.SalePosts.Find(salePost.PostID);
+                if (existingPost != null)
+                {
+                    existingPost.AuthorID = salePost.AuthorID;
+                    existingPost.ContentText = salePost.ContentText;
+                    existingPost.PostTime = salePost.PostTime;
+                    existingPost.ImagesID = salePost.ImagesID;
+                    existingPost.PostType = salePost.PostType;
+                    existingPost.Price = salePost.Price;
+                    existingPost.Category = salePost.Category;
 
+                    _dbConnector.SaveChanges();
+                }
+
+                return existingPost?.PostID;
+            }
+            catch (Exception ex)
+            {
+                
+                Console.WriteLine($"Error in UpdatePost: {ex.Message}");
+                return null;
+            }
+        }
+
+        public bool RemovePost(Guid postID)
+        {
+            try
+            {
+                var postToRemove = _dbConnector.SalePosts.Find(postID);
+                if (postToRemove != null)
+                {
+                    _dbConnector.SalePosts.Remove(postToRemove);
+                    _dbConnector.SaveChanges();
+                    return true;
+                }
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+                
+                Console.WriteLine($"Error in RemovePost: {ex.Message}");
+                return false;
+            }
+        }
     }
 }

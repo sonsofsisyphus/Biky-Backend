@@ -1,24 +1,28 @@
-using Biky_Backend.Options;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Biky_Backend.Options;
 using Services;
 using Services.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers();
 
-// remove jwt provider
-builder.Services.AddSingleton<JwtProvider>();
+// Add database context
+builder.Services.AddDbContext<DBConnector>(options =>
+{
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
+}, ServiceLifetime.Scoped);
 
-builder.Services.AddSingleton<UserService>();
-builder.Services.AddSingleton<SocialMediaPostService>();
-builder.Services.AddSingleton<SalePostService>();
-builder.Services.AddSingleton<LikeService>();
-builder.Services.AddSingleton<CommentService>();
-builder.Services.AddSingleton<NotificationService>();
+builder.Services.AddScoped<JwtProvider>();
+builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<SocialMediaPostService>();
+builder.Services.AddScoped<SalePostService>();
+builder.Services.AddScoped<LikeService>();
+builder.Services.AddScoped<CommentService>();
+builder.Services.AddScoped<NotificationService>();
 builder.Services.AddTransient<ImageService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -52,15 +56,29 @@ builder.Services.AddSwaggerGen(opt =>
     });
 });
 
-
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer();
 builder.Services.ConfigureOptions<JwtOptionsSetup>();
 builder.Services.ConfigureOptions<JwtBearerOptionsSetup>();
 
-var app = builder.Build(); 
+var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Apply migrations and seed data
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var dbContext = services.GetRequiredService<DBConnector>();
+        dbContext.Database.Migrate();
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred while applying migrations or seeding the database.");
+    }
+}
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

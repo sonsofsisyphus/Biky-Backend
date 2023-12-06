@@ -1,11 +1,5 @@
 ﻿using Entities;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Services.DTO
 {
@@ -17,7 +11,7 @@ namespace Services.DTO
         [Required]
         public string ContentText { get; set; }
 
-        public ImageCollection Images { get; set; }
+        public Guid Images { get; set; }
 
         [Required]
         public bool IsAnonymous { get; set; }
@@ -30,12 +24,9 @@ namespace Services.DTO
                 AuthorID = AuthorID,
                 ContentText = ContentText,
                 PostTime = DateTime.Now,
-                Images = Images,
-                LikeCount = 0,
+                ImagesID = Images,
                 IsAnonymous = IsAnonymous
-
             };
         }
-
     }
 }

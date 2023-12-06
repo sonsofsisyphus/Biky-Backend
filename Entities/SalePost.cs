@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using Entities.CategorySystem;
 
 namespace Entities
@@ -16,15 +11,16 @@ namespace Entities
         SECOND_HAND_POST,
         TRADE_POST
     }
-    public class SalePost: Post
+    
+    public class SalePost : Post
     {
-        [Required]
         public PostType PostType { get; set; }
 
-        [Required]
         public string Price { get; set; }
 
-        [Required]
-        public Category Category { get; set; }
+        [ForeignKey("Category")]
+        public Guid CategoryID { get; set; }
+
+        public virtual Category Category { get; set; }
     }
 }

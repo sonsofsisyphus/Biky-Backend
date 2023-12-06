@@ -3,72 +3,83 @@ using Services.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Services
 {
     public class NotificationService
     {
-        private List<Notification> dbNotifications;
+        private readonly DBConnector _dbConnector;
+
+        public NotificationService(DBConnector dbConnector)
+        {
+            _dbConnector = dbConnector;
+        }
 
         public void AddNotification(NotificationAddRequest notification)
         {
-            dbNotifications.Add(notification.ToNotification());
-        }
-
-
-        public void RemoveLikeNotification(Like like) 
-        {
-            dbNotifications = dbNotifications.Where(a => a.UserID != like.UserID 
-            && a.ContentID != like.PostID
-            && a.NotificationType == NotificationType.LIKE).ToList();
-        }
-
-        public void RemoveFollowNotification(Following following)
-        {
-            dbNotifications = dbNotifications.Where(a => a.UserID != following.FollowingID
-            && a.ReceiverID != following.FollowerID
-            && a.NotificationType == NotificationType.FOLLOW).ToList();
-        }
-
-        public void RemoveFollowPostNotification(Guid receiverID, Guid contentID)
-        {
-            dbNotifications = dbNotifications.Where(a => a.ContentID != contentID 
-            && a.ReceiverID != receiverID
-            && a.NotificationType == NotificationType.FOLLOW_POST).ToList();
-        }
-
-        public void RemoveCommentNotification(Guid contentID)
-        {
-            dbNotifications = dbNotifications.Where(a => a.ContentID != contentID
-            && a.NotificationType == NotificationType.COMMENT).ToList();
+            try
+            {
+                _dbConnector.Notifications.Add(notification.ToNotification());
+                _dbConnector.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("Error adding notification.", ex);
+            }
         }
 
         public void SetAllSeen(Guid receiverID)
         {
-            foreach(var n in dbNotifications)
+            try
             {
-                if(n.ReceiverID == receiverID)
+                var notifications = _dbConnector.Notifications.Where(n => n.ReceiverID == receiverID);
+                foreach (var notification in notifications)
                 {
-                    n.IsSeen = true;
+                    notification.IsSeen = true;
                 }
+
+                _dbConnector.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("Error setting all notifications as seen.", ex);
             }
         }
 
         public int GetUnseenNotificationNumber(Guid receiverID)
         {
-            return dbNotifications.Count(a => !a.IsSeen && a.ReceiverID == receiverID);
+            try
+            {
+                return _dbConnector.Notifications.Count(a => !a.IsSeen && a.ReceiverID == receiverID);
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("Error getting unseen notification count.", ex);
+            }
         }
 
         public List<Notification> GetAllNotifications(Guid receiverID)
         {
-            return dbNotifications.Where(a => a.ReceiverID == receiverID).ToList();
+            try
+            {
+                return _dbConnector.Notifications.Where(a => a.ReceiverID == receiverID).ToList();
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("Error getting all notifications.", ex);
+            }
         }
 
         public List<Notification> GetAllUnseenNotifications(Guid receiverID)
         {
-            return dbNotifications.Where(a => a.ReceiverID == receiverID && !a.IsSeen).ToList();
+            try
+            {
+                return _dbConnector.Notifications.Where(a => a.ReceiverID == receiverID && !a.IsSeen).ToList();
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("Error getting all unseen notifications.", ex);
+            }
         }
     }
 }

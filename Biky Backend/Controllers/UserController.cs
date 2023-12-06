@@ -15,7 +15,7 @@ namespace Biky_Backend.Controllers
         private readonly ILogger<UserController> _logger;
         private readonly UserService _userService;
         private readonly JwtProvider _jwtProvider;
-        
+
         public UserController(ILogger<UserController> logger, UserService userService, JwtProvider jwtProvider)
         {
             _logger = logger;
@@ -49,9 +49,9 @@ namespace Biky_Backend.Controllers
 
         [HttpGet]
         [Route("AddFollowing")]
-        public IActionResult addFollowing([FromQuery] Following following)
+        public IActionResult AddFollowing([FromQuery] Follow follow)
         {
-            _userService.AddFollowing(following);
+            _userService.AddFollowing(follow);
             return Content("", "application/json");
         }
 
@@ -72,32 +72,59 @@ namespace Biky_Backend.Controllers
                 });
             }
 
-            // Check if user entered exists and valid
-            if (login.Nickname != "mahmut")
+            var user = _userService.GetUserByNickname(login.Nickname);
+
+            if (user == null || !_userService.ValidatePassword(user.UserID, login.Password))
             {
                 return BadRequest(new AuthResult()
                 {
                     Result = false,
                     Errors = new List<string>()
                     {
-                        "Nickname does not exist!"
+                        "Invalid nickname or password"
                     }
                 });
             }
-
-            var user = new User()
-            {
-                UserID = Guid.Parse("c71ae2ef-dcfc-419c-a6c5-5858716cb5bd"),
-                UniversityID = "123456",
-                Nickname = login.Nickname,
-                Email = login.Password + "@example.com",
-            };
 
             // Generate Jwt
             var token = _jwtProvider.Generate(user);
 
             // Return it
             return Ok(token);
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("Register")]
+        public IActionResult Register([FromBody] UserRegisterRequest register)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new AuthResult()
+                {
+                    Result = false,
+                    Errors = new List<string>()
+                    {
+                        "Invalid payload"
+                    }
+                });
+            }
+
+            var registrationResult = _userService.Register(register);
+
+            if (!registrationResult)
+            {
+                return BadRequest(new AuthResult()
+                {
+                    Result = false,
+                    Errors = new List<string>()
+                    {
+                        "Registration failed"
+                    }
+                });
+            }
+
+            return Ok(new AuthResult() { Result = true });
         }
 
         [Authorize(Roles = "Normal")]

@@ -1,121 +1,216 @@
 ﻿using Entities;
+using Services.DTO;
+
 namespace Services
 {
     public class UserService
     {
-        private List<User> dbUsers = new List<User>
-        {
-             new User
-            {
-                UserID = Guid.Parse("c71ae2ef-dcfc-419c-a6c5-5858716cb5bd"),
-                UniversityID = "123456",
-                Nickname = "user1",
-                Email = "user1@example.com"
-            },
-            new User
-            {
-                UserID = Guid.Parse("5f2d78d7-a387-49e9-b5a5-899f91ffe2f9"),
-                UniversityID = "789012",
-                Nickname = "user2",
-                Email = "user2@example.com"
-            },
-            new User
-            {
-                UserID = Guid.Parse("2cd9834f-6911-44a8-8080-7a313867ff0f"),
-                UniversityID = "232356",
-                Nickname = "user3",
-                Email = "user3@example.com"
-            },
-        } ;
+        private readonly DBConnector _dbConnector;
+        private readonly NotificationService _notificationService;
 
-        private List<Following> followings = new List<Following>
+        public UserService(DBConnector dbConnector, NotificationService notificationService)
         {
-            new Following
-            {
-                FollowerID = Guid.Parse("c71ae2ef-dcfc-419c-a6c5-5858716cb5bd"),
-                FollowingID = Guid.Parse("5f2d78d7-a387-49e9-b5a5-899f91ffe2f9")
-            },
-            new Following
-            {
-                FollowerID = Guid.Parse("c71ae2ef-dcfc-419c-a6c5-5858716cb5bd"),
-                FollowingID = Guid.Parse("2cd9834f-6911-44a8-8080-7a313867ff0f")
-            }
-        };
-        private NotificationService _notificationService;
-        public UserService(NotificationService notificationService)
-        {
+            _dbConnector = dbConnector ?? throw new ArgumentNullException(nameof(dbConnector));
             _notificationService = notificationService;
         }
 
         public User? GetUserByID(Guid userID)
         {
-            User? user = dbUsers.FirstOrDefault(user => user.UserID == userID);
+            try
+            {
+                return _dbConnector.Users.FirstOrDefault(user => user.UserID == userID);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in GetUserByID: {ex.Message}");
+                return null;
+            }
+        }
 
-            return user;
+        public User? GetUserByNickname(string nickname)
+        {
+            try
+            {
+                return _dbConnector.Users.FirstOrDefault(user => user.Nickname == nickname);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in GetUserByNickname: {ex.Message}");
+                return null;
+            }
         }
 
         public List<Guid> GetFollowersByID(Guid userID)
         {
-            var followerList = followings.Where(a => a.FollowerID == userID).Select(a => a.FollowingID).ToList();
-
-            return followerList;
+            try
+            {
+                return _dbConnector.Follows
+                    .Where(a => a.FollowerID == userID)
+                    .Select(a => a.FollowingID)
+                    .ToList();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in GetFollowersByID: {ex.Message}");
+                return new List<Guid>();
+            }
         }
 
         public List<Guid> GetFollowingsByID(Guid userID)
         {
-            var followingList = followings.Where(a => a.FollowingID == userID).Select(a => a.FollowerID).ToList();
-
-            return followingList;
+            try
+            {
+                return _dbConnector.Follows
+                    .Where(a => a.FollowingID == userID)
+                    .Select(a => a.FollowerID)
+                    .ToList();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in GetFollowingsByID: {ex.Message}");
+                return new List<Guid>();
+            }
         }
 
-        public void AddFollowing(Following following)
+        public void AddFollowing(Follow follow)
         {
-            if(ValidateFollowing(following))
+            try
             {
-                _notificationService.AddNotification(new DTO.NotificationAddRequest()
+                if (ValidateFollowing(follow))
                 {
-                    NotificationType = NotificationType.FOLLOW,
-                    ReceiverID = following.FollowerID,
-                    UserID = following.FollowingID
+                    _notificationService.AddNotification(new DTO.NotificationAddRequest()
+                    {
+                        ReceiverID = follow.FollowerID,
+                        Content = $"{follow.Following.Nickname} has followed you"
+                    });
 
-                });
-                followings.Add(following);
+                    _dbConnector.Follows.Add(follow);
+                    _dbConnector.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in AddFollowing: {ex.Message}");
             }
         }
 
-        public void RemoveFollowing(Following following)
+        public void RemoveFollowing(Follow follow)
         {
-            if(followings.Contains(following))
+            try
             {
-                _notificationService.RemoveFollowNotification(following);
-                followings.Remove(following);
+                if (_dbConnector.Follows.Any(f =>
+                        f.FollowerID == follow.FollowerID && f.FollowingID == follow.FollowingID))
+                {
+                    var existingFollow = _dbConnector.Follows.FirstOrDefault(f =>
+                        f.FollowerID == follow.FollowerID && f.FollowingID == follow.FollowingID);
+
+                    if (existingFollow != null)
+                    {
+                        _dbConnector.Follows.Remove(existingFollow);
+                        _dbConnector.SaveChanges();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in RemoveFollowing: {ex.Message}");
             }
         }
 
-        private bool ValidateFollowing(Following following)
+        public bool ValidateFollowing(Follow follow)
         {
-            if(dbUsers.FirstOrDefault(user => user.UserID == following.FollowerID) == null)
+            try
             {
-                throw new ArgumentException("Given followerID doesn't exist.");
+                var followerExists = _dbConnector.Users.Any(user => user.UserID == follow.FollowerID);
+                var followingExists = _dbConnector.Users.Any(user => user.UserID == follow.FollowingID);
+                var followExists = _dbConnector.Follows.Any(f =>
+                    f.FollowerID == follow.FollowerID && f.FollowingID == follow.FollowingID);
+
+                if (!followerExists)
+                {
+                    throw new ArgumentException("Given followerID doesn't exist.");
+                }
+
+                if (!followingExists)
+                {
+                    throw new ArgumentException("Given followingID doesn't exist.");
+                }
+
+                if (followExists)
+                {
+                    throw new ArgumentException("Given following already exists.");
+                }
+
+                if (follow.FollowerID == follow.FollowingID)
+                {
+                    throw new ArgumentException("An user cannot follow itself.");
+                }
+
+                return true;
             }
-            else if (dbUsers.FirstOrDefault(user => user.UserID == following.FollowingID) == null)
+            catch (Exception ex)
             {
-                throw new ArgumentException("Given followingID doesn't exist.");
+                Console.WriteLine($"Error in ValidateFollowing: {ex.Message}");
+                return false;
             }
-            else if (followings.Contains(following))
+        }
+
+        public bool ValidatePassword(Guid userID, string password)
+        {
+            try
             {
-                throw new ArgumentException("Given following already exists.");
-            } 
-             if(following.FollowerID == following.FollowingID)
-            {
-                throw new ArgumentException("An user cannot follow itself.");
+                var user = _dbConnector.Users.FirstOrDefault(u => u.UserID == userID);
+                return user != null && BCrypt.Net.BCrypt.Verify(password, user.Password);
             }
-            return true;
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in ValidatePassword: {ex.Message}");
+                return false;
+            }
         }
 
         public bool ValidateID(Guid userID)
         {
-            return dbUsers.FindIndex(a => a.UserID == userID) != -1;
+            try
+            {
+                return _dbConnector.Users.Any(a => a.UserID == userID);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in ValidateID: {ex.Message}");
+                return false;
+            }
+        }
+
+        public bool Register(UserRegisterRequest request)
+        {
+            try
+            {
+                if (_dbConnector.Users.Any(u => u.Nickname == request.Nickname))
+                {
+                    throw new ArgumentException("Nickname is already taken.");
+                }
+
+                string hashedPassword = BCrypt.Net.BCrypt.HashPassword(request.Password);
+                
+                var newUser = new User
+                {
+                    UserID = Guid.NewGuid(),
+                    UniversityID = request.UniversityID,
+                    Nickname = request.Nickname,
+                    Email = request.Email,
+                    Password = hashedPassword,
+                };
+
+                _dbConnector.Users.Add(newUser);
+                _dbConnector.SaveChanges();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in Register: {ex.Message}");
+                return false;
+            }
         }
     }
 }

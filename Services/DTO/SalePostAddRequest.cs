@@ -1,11 +1,5 @@
 ﻿using Entities;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Entities.CategorySystem;
 
 namespace Services.DTO
 {
@@ -17,7 +11,7 @@ namespace Services.DTO
         [Required]
         public string ContentText { get; set; }
 
-        public ImageCollection Images { get; set; }
+        public Guid Images { get; set; }
 
         [Required]
         public PostType PostType { get; set; }
@@ -26,7 +20,8 @@ namespace Services.DTO
         public string Price { get; set; }
 
         [Required]
-        public Category Category { get; set; }
+        public Guid Category { get; set; }
+        
         public SalePost ToSalePost()
         {
             return new SalePost
@@ -35,10 +30,10 @@ namespace Services.DTO
                 AuthorID = AuthorID,
                 ContentText = ContentText,
                 PostTime = DateTime.Now,
-                Images = Images,
+                ImagesID = Images,
                 PostType = PostType,
                 Price = Price,
-                Category = Category
+                CategoryID = Category
             };
         }
     }

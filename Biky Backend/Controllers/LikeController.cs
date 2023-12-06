@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Mvc;
 using Services;
 using Entities;
 using Newtonsoft.Json;
-using Microsoft.Extensions.Hosting;
 
 namespace Biky_Backend.Controllers
 {
@@ -10,39 +9,61 @@ namespace Biky_Backend.Controllers
     [Route("[controller]")]
     public class LikeController : ControllerBase
     {
-
         private readonly ILogger<LikeController> _logger;
         private readonly LikeService _likeService;
+
         public LikeController(ILogger<LikeController> logger, LikeService likeService)
         {
             _logger = logger;
             _likeService = likeService;
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("Add")]
-        public IActionResult AddLike([FromQuery] Like like)
+        public IActionResult AddLike([FromBody] Like like)
         {
-            _likeService.AddLike(like);
-            return Ok();
+            try
+            {
+                _likeService.AddLike(like);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error adding like.");
+                return BadRequest("Error adding like.");
+            }
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("Remove")]
-        public IActionResult RemoveLike([FromQuery] Like like)
+        public IActionResult RemoveLike([FromBody] Like like)
         {
-            _likeService.RemoveLike(like);
-            return Ok();
+            try
+            {
+                _likeService.RemoveLike(like);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error removing like.");
+                return BadRequest("Error removing like.");
+            }
         }
 
         [HttpGet]
         [Route("Exists")]
-        //Will be used in the frontend to determine if 
         public IActionResult LikeExists([FromQuery] Like like)
         {
-            var result = _likeService.Exists(like);
-            return Content(JsonConvert.SerializeObject(result), "application/json");
+            try
+            {
+                var result = _likeService.Exists(like);
+                return Content(JsonConvert.SerializeObject(result), "application/json");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error checking if like exists.");
+                return BadRequest("Error checking if like exists.");
+            }
         }
-
     }
 }

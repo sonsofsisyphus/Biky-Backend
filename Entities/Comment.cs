@@ -1,27 +1,26 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Entities
 {
     public class Comment
     {
-        [Required]
+        [Key]
         public Guid CommentID { get; set; }
 
-        [Required]
+        [ForeignKey("User")]
         public Guid AuthorID { get; set; }
 
-        [Required]
+        [ForeignKey("Post")]
         public Guid PostID { get; set; }
 
-        [Required]
+        public virtual User Author { get; set; }
+
+        public virtual SocialMediaPost Post { get; set; }
+
         public string Content { get; set; }
 
-        [Required]
         public DateTime PostTime { get; set; }
     }
 }

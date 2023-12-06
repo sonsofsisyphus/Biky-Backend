@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using Services;
-using Entities;
 using Newtonsoft.Json;
 
 namespace Biky_Backend.Controllers
@@ -9,10 +8,10 @@ namespace Biky_Backend.Controllers
     [Route("[controller]")]
     public class ImageController : ControllerBase
     {
-
-        private readonly ILogger<UserController> _logger;
+        private readonly ILogger<ImageController> _logger;
         private readonly ImageService _imageService;
-        public ImageController(ILogger<UserController> logger, ImageService imageService)
+
+        public ImageController(ILogger<ImageController> logger, ImageService imageService)
         {
             _logger = logger;
             _imageService = imageService;
@@ -22,10 +21,16 @@ namespace Biky_Backend.Controllers
         [Route("Upload")]
         public async Task<IActionResult> UploadImage(IFormFile file)
         {
-            var result = await _imageService.UploadFile(file);
-            return Content(JsonConvert.SerializeObject(result), "application/json");
+            try
+            {
+                var result = await _imageService.UploadFile(file);
+                return Content(JsonConvert.SerializeObject(result), "application/json");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error uploading image.");
+                return BadRequest("Error uploading image.");
+            }
         }
-
-
     }
 }

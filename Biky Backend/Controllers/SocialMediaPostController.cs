@@ -1,9 +1,7 @@
+using Entities;
 using Microsoft.AspNetCore.Mvc;
 using Services;
-using Entities;
-using Newtonsoft.Json;
 using Services.DTO;
-using Microsoft.Extensions.Hosting;
 
 namespace Biky_Backend.Controllers
 {
@@ -11,9 +9,9 @@ namespace Biky_Backend.Controllers
     [Route("[controller]")]
     public class SocialMediaPostController : ControllerBase
     {
-
         private readonly ILogger<UserController> _logger;
         private readonly SocialMediaPostService _socialMediaPostService;
+
         public SocialMediaPostController(ILogger<UserController> logger, SocialMediaPostService socialMediaPostService)
         {
             _logger = logger;
@@ -25,7 +23,9 @@ namespace Biky_Backend.Controllers
         public IActionResult GetPostByPostID([FromQuery] Guid postID)
         {
             var post = _socialMediaPostService.GetPostByPostID(postID);
-            return Content(JsonConvert.SerializeObject(post), "application/json");
+            if (post != null)
+                return Ok(post);
+            return NotFound("Post not found!");
         }
 
         [HttpGet]
@@ -33,32 +33,37 @@ namespace Biky_Backend.Controllers
         public IActionResult GetPostByAuthorID([FromQuery] Guid authorID)
         {
             List<SocialMediaPost> posts = _socialMediaPostService.GetPostByUserID(authorID);
-            return Content(JsonConvert.SerializeObject(posts), "application/json");
+            return Ok(posts);
         }
 
         [HttpPost]
         [Route("Add")]
-        public IActionResult AddPost([FromBody] SocialMediaPostAddRequest socialMediaPost)
+        public IActionResult AddPost([FromBody] SocialMediaPostAddRequest addRequest)
         {
-            Guid postID = _socialMediaPostService.AddPost(socialMediaPost);
-            return Content(JsonConvert.SerializeObject(postID), "application/json");
+            var result = _socialMediaPostService.AddPost(addRequest.ToSocialMediaPost());
+            if (result != null)
+                return CreatedAtAction(nameof(GetPostByPostID), new { result }, result);
+            return BadRequest("Post cannot be added");
         }
 
         [HttpPost]
         [Route("Edit")]
         public IActionResult EditPost([FromBody] SocialMediaPost socialMediaPost)
         {
-            _socialMediaPostService.UpdatePost(socialMediaPost);
-            return Content(JsonConvert.SerializeObject(socialMediaPost.PostID), "application/json");
+            var result = _socialMediaPostService.UpdatePost(socialMediaPost);
+            if (result != null)
+                return Ok(result);
+            return BadRequest("Post cannot be updated");
         }
 
-        [HttpGet]
+        [HttpDelete]
         [Route("Remove")]
         public IActionResult RemovePost([FromQuery] Guid postID)
         {
-            _socialMediaPostService.RemovePost(postID);
-            return Content(JsonConvert.SerializeObject(postID), "application/json");
+            var result = _socialMediaPostService.RemovePost(postID);
+            if (result)
+                return NoContent();
+            return NotFound();
         }
-
     }
 }

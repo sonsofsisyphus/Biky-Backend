@@ -1,75 +1,75 @@
-﻿using Entities;
-using Services.DTO;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
+using System.Collections.Generic;
+using Entities;
+using Services.DTO;
 
 namespace Services
 {
     public class CommentService
     {
-        private List<Comment> dbComments;
+        private readonly DBConnector _dbContext;
         private readonly UserService _userService;
         private readonly SocialMediaPostService _socialMediaPostService;
         private readonly NotificationService _notificationService;
 
-        public CommentService(UserService userService, SocialMediaPostService socialMediaPostService, NotificationService notificationService)
+        public CommentService(DBConnector dbContext, UserService userService, SocialMediaPostService socialMediaPostService, NotificationService notificationService)
         {
+            _dbContext = dbContext;
             _userService = userService;
             _socialMediaPostService = socialMediaPostService;
             _notificationService = notificationService;
         }
 
-        public Guid AddComment(CommentAddRequest commentAddRequest)
+        public Guid? AddComment(CommentAddRequest commentAddRequest)
         {
             Comment comment = commentAddRequest.ToComment();
-            if(ValidateComment(comment))
+            if (ValidateComment(comment))
             {
                 _notificationService.AddNotification(new NotificationAddRequest()
                 {
-                    NotificationType = NotificationType.COMMENT,
                     ReceiverID = _socialMediaPostService.PostOwner(comment.PostID),
-                    UserID = comment.AuthorID,
-                    ContentID = comment.CommentID
+                    Content = $"{comment.Author.Nickname} has made a comment on your post"
                 });
-                dbComments.Add(comment);
+                _dbContext.Comments.Add(comment);
+                _dbContext.SaveChanges();
+                return comment.CommentID;
             }
-            return comment.CommentID;
+            return null;
         }
 
         public void EditComment(CommentEditRequest comment)
         {
-            var index = dbComments.FindIndex(a => a.CommentID == comment.CommentID);
-            if (index != -1)
+            var existingComment = _dbContext.Comments.Find(comment.CommentID);
+            if (existingComment != null)
             {
-                dbComments[index].Content = comment.Content;
+                existingComment.Content = comment.Content;
+                _dbContext.SaveChanges();
             }
         }
 
         public void RemoveComment(Guid commentID)
         {
-            var index = dbComments.FindIndex(a => a.CommentID == commentID);
-            if (index != -1)
+            var existingComment = _dbContext.Comments.Find(commentID);
+            if (existingComment != null)
             {
-                _notificationService.RemoveCommentNotification(commentID);
-                dbComments.RemoveAt(index);
+                _dbContext.Comments.Remove(existingComment);
+                _dbContext.SaveChanges();
             }
         }
 
         public List<Comment> GetCommentByPost(Guid postID)
         {
-            return dbComments.Where(a => a.PostID == postID).ToList();
+            return _dbContext.Comments.Where(a => a.PostID == postID).ToList();
         }
 
         public Comment? GetCommentByID(Guid commentID)
         {
-            return dbComments.FirstOrDefault(a => a.CommentID == commentID);
+            return _dbContext.Comments.FirstOrDefault(a => a.CommentID == commentID);
         }
 
-        public bool ValidateComment(Comment comment) {
+        public bool ValidateComment(Comment comment)
+        {
             if (!_userService.ValidateID(comment.AuthorID))
             {
                 throw new ArgumentException("Given UserID doesn't exist.");
@@ -79,6 +79,6 @@ namespace Services
                 throw new ArgumentException("Given PostID doesn't exist.");
             }
             return true;
-            }
         }
+    }
 }

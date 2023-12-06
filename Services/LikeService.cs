@@ -1,21 +1,18 @@
 ﻿using Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Services.DTO;
 
 namespace Services
 {
     public class LikeService
     {
-        private List<Like> dbLikes;
+        private readonly DBConnector _dbConnector;
         private readonly UserService _userService;
         private readonly SocialMediaPostService _socialMediaPostService;
         private readonly NotificationService _notificationService;
 
-        public LikeService(UserService userService, SocialMediaPostService socialMediaPostService, NotificationService notificationService)
+        public LikeService(DBConnector dbConnector, UserService userService, SocialMediaPostService socialMediaPostService, NotificationService notificationService)
         {
+            _dbConnector = dbConnector;
             _userService = userService;
             _socialMediaPostService = socialMediaPostService;
             _notificationService = notificationService;
@@ -23,46 +20,72 @@ namespace Services
 
         public void AddLike(Like like)
         {
-            if(ValidateLike(like) && !Exists(like))
+            try
             {
-                _notificationService.AddNotification(new DTO.NotificationAddRequest()
+                if (ValidateLike(like) && !Exists(like))
                 {
-                    NotificationType = NotificationType.LIKE,
-                    ReceiverID = _socialMediaPostService.PostOwner(like.PostID),
-                    UserID = like.UserID,
-                    ContentID = like.PostID
-                });
-                dbLikes.Add(like);
-                _socialMediaPostService.AddLikeToPost(like);
+                    _notificationService.AddNotification(new NotificationAddRequest()
+                    {
+                        ReceiverID = _socialMediaPostService.PostOwner(like.PostID),
+                        Content = $"{like.User.Nickname} has liked your post"
+                    });
+
+                    _dbConnector.Likes.Add(like);
+                    _dbConnector.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("Error adding like.", ex);
             }
         }
 
         public void RemoveLike(Like like)
         {
-            if (ValidateLike(like) && Exists(like))
+            try
             {
-                _notificationService.RemoveLikeNotification(like);
-                dbLikes.Remove(like);
-                _socialMediaPostService.RemoveLikeFromPost(like);
+                if (ValidateLike(like) && Exists(like))
+                {
+                    _dbConnector.Likes.Remove(like);
+                    _dbConnector.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("Error removing like.", ex);
             }
         }
 
-        public bool ValidateLike(Like like) 
+        public bool ValidateLike(Like like)
         {
-            if(!_userService.ValidateID(like.UserID))
+            try
             {
-                throw new ArgumentException("Given UserID doesn't exist.");
-            } else if(!_socialMediaPostService.ValidateID(like.PostID))
+                if (!_userService.ValidateID(like.UserID))
+                {
+                    throw new ArgumentException("Given UserID doesn't exist.");
+                }
+                else if (!_socialMediaPostService.ValidateID(like.PostID))
+                {
+                    throw new ArgumentException("Given PostID doesn't exist.");
+                }
+                return true;
+            }
+            catch (Exception ex)
             {
-                throw new ArgumentException("Given PostID doesn't exist.");
-            } 
-            return true;
+                throw new ApplicationException("Error validating like.", ex);
+            }
         }
 
         public bool Exists(Like like)
         {
-            return dbLikes.Contains(like);
+            try
+            {
+                return _dbConnector.Likes.Contains(like);
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("Error checking if like exists.", ex);
+            }
         }
-
     }
 }
