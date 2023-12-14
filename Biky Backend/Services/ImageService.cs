@@ -6,7 +6,7 @@ namespace Services
     {
         private readonly List<string> allowedFileTypes = new List<string>()
         {
-            "png", "jpg", "jpeg", "webp", "gif"
+            ".png", ".jpg", ".jpeg", ".webp", ".gif"
         };
 
         public async Task<string> UploadFile(IFormFile formFile)

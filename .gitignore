@@ -361,3 +361,7 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/Biky Backend/sqlite3.db
+/Biky Backend/Migrations/DBConnectorModelSnapshot.cs
+/Biky Backend/Migrations/20231211232712_InitialCreate.cs
+/Biky Backend/Migrations/20231211232712_InitialCreate.Designer.cs
