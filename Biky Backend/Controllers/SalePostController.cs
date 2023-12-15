@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Services;
 using Services.DTO;
 using Entities;
+using Biky_Backend.Services;
 
 namespace Biky_Backend.Controllers
 {
@@ -11,11 +12,13 @@ namespace Biky_Backend.Controllers
     {
         private readonly ILogger<SalePostController> _logger;
         private readonly SalePostService _salePostService;
+        private readonly FeedService _feedService;
 
-        public SalePostController(ILogger<SalePostController> logger, SalePostService salePostService)
+        public SalePostController(ILogger<SalePostController> logger, SalePostService salePostService, FeedService feedService)
         {
             _logger = logger;
             _salePostService = salePostService;
+            _feedService = feedService;
         }
 
         [HttpGet]
@@ -58,7 +61,7 @@ namespace Biky_Backend.Controllers
         {
             try
             {
-                var result = _salePostService.AddPost(addRequest.ToSalePost());
+                var result = _salePostService.AddPost(addRequest);
                 if (result != null)
                     return CreatedAtAction(nameof(GetPostByPostID), new { result }, result);
                 return BadRequest("Post cannot be added");
@@ -103,6 +106,24 @@ namespace Biky_Backend.Controllers
             {
                 _logger.LogError(ex, "Error removing sale post.");
                 return BadRequest("Error removing sale post.");
+            }
+        }
+
+        [HttpGet]
+        [Route("GetAll")]
+        public IActionResult GetAllFeed()
+        {
+            try
+            {
+                var result = _feedService.GetSaleAll();
+                if (result != null)
+                    return Ok(result);
+                return NotFound();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting feed.");
+                return BadRequest("Error getting feed.");
             }
         }
     }

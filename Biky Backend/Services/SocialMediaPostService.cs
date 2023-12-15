@@ -69,7 +69,7 @@ namespace Services
             {
                 List<Guid> followings = _userService.GetFollowingsByID(userID);
                 return _dbConnector.SocialMediaPosts
-                    .Where(item => followings.Contains(item.AuthorID))
+                    .Where(item => followings.Contains(item.AuthorID)).Include(p => p.Author)
                     .OrderByDescending(item => item.PostTime)
                     .ToList();
             }

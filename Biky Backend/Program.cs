@@ -27,6 +27,7 @@ builder.Services.AddScoped<CommentService>();
 builder.Services.AddScoped<NotificationService>();
 builder.Services.AddTransient<ImageService>();
 builder.Services.AddTransient<FeedService>();
+builder.Services.AddTransient<CategoryService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

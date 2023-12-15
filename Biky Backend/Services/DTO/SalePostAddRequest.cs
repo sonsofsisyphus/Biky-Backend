@@ -11,16 +11,16 @@ namespace Services.DTO
         [Required]
         public string ContentText { get; set; }
 
-        public Guid Images { get; set; }
+        public List<String>? Images { get; set; }
 
         [Required]
         public PostType PostType { get; set; }
 
         [Required]
-        public string Price { get; set; }
+        public decimal Price { get; set; }
 
         [Required]
-        public Guid Category { get; set; }
+        public int Category { get; set; }
         
         public SalePost ToSalePost()
         {

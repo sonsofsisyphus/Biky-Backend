@@ -15,9 +15,9 @@ namespace Biky_Backend.Services
         private readonly LikeService _likeService;
         private readonly ImageCollectionService _imageCollectionService;
 
-        public FeedService(DBConnector dbConnector, 
-            SocialMediaPostService socialMediaPostService, 
-            SalePostService salePostService, 
+        public FeedService(DBConnector dbConnector,
+            SocialMediaPostService socialMediaPostService,
+            SalePostService salePostService,
             LikeService likeService,
             ImageCollectionService imageCollectionService)
         {
@@ -37,7 +37,17 @@ namespace Biky_Backend.Services
                     UserID = userID,
                     PostID = p.PostID
                 })));
-            foreach(var i in p)
+            foreach (var i in p)
+            {
+                i.Images = _imageCollectionService.GetImagesByPost(i.PostID);
+            }
+            return p;
+        }
+
+        private List<SalePostSendRequest> ConvertSaleToSend(List<SalePost> posts)
+        {
+            var p = posts.ConvertAll(p => SalePostSendRequest.ToSalePostSendRequest(p));
+            foreach (var i in p)
             {
                 i.Images = _imageCollectionService.GetImagesByPost(i.PostID);
             }
@@ -55,6 +65,22 @@ namespace Biky_Backend.Services
             return ConvertSocialToSend(posts, userID);
         }
 
-        //public List<SocialMediaPostSendRequest> GetSocialMediaFollowing(Guid userID)
+        public List<SalePostSendRequest> GetSaleAll()
+        {
+            List<SalePost>? posts = _salePostService.GetAllFeed();
+            return ConvertSaleToSend(posts);
+        }
+
+        public List<SalePostSendRequest> GetSaleFollowings(Guid userID)
+        {
+            List<SalePost>? posts = _salePostService.GetFollowingsFeed(userID);
+            return ConvertSaleToSend(posts);
+        }
+
+        public List<SalePostSendRequest> GetSaleFiltered(Guid userID, Dictionary<String, Object> filters) {
+            List<SalePost>? posts = _salePostService.GetFilteredFeed(filters);
+            return ConvertSaleToSend(posts);
+        }
+
     }
-}
+    }

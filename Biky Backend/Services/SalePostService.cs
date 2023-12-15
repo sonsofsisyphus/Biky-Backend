@@ -1,4 +1,6 @@
 ﻿using Entities;
+using Microsoft.EntityFrameworkCore;
+using Services.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,10 +10,12 @@ namespace Services
     public class SalePostService
     {
         private readonly DBConnector _dbConnector;
+        private readonly UserService _userService;
 
-        public SalePostService(DBConnector dbConnector)
+        public SalePostService(DBConnector dbConnector, UserService userService)
         {
             _dbConnector = dbConnector ?? throw new ArgumentNullException(nameof(dbConnector));
+            _userService = userService;
         }
 
         public SalePost? GetPostByPostID(Guid postID)
@@ -45,23 +49,89 @@ namespace Services
         {
             try
             {
-                return _dbConnector.SalePosts.OrderByDescending(item => item.PostTime).ToList();
+                var p = _dbConnector.SalePosts
+                   .OrderByDescending(item => item.PostTime)
+                   .Include(p => p.Author)
+                   .ToList();
+
+                return p;
+
             }
             catch (Exception ex)
             {
-                
                 Console.WriteLine($"Error in GetAllFeed: {ex.Message}");
                 return new List<SalePost>();
             }
         }
 
-        public Guid AddPost(SalePost post)
+        public List<SalePost> GetFollowingsFeed(Guid userID)
         {
             try
             {
-                _dbConnector.SalePosts.Add(post);
+                List<Guid> followings = _userService.GetFollowingsByID(userID);
+                return _dbConnector.SalePosts
+                    .Where(item => followings.Contains(item.AuthorID))
+                    .Include(p => p.Author)
+                    .OrderByDescending(item => item.PostTime)
+                    .ToList();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in GetFollowingsFeed: {ex.Message}");
+                return new List<SalePost>();
+            }
+        }
+
+        public List<SalePost> GetFilteredFeed(Dictionary<String, Object> filters)
+        {
+            try
+            {
+                var query = _dbConnector.SalePosts.AsQueryable();
+                if (filters.ContainsKey("min") && filters["low"] is decimal low)
+                {
+                    query = query.Where(entity => low >= entity.Price);
+                }
+                if (filters.ContainsKey("max") && filters["max"] is decimal max)
+                {
+                    query = query.Where(entity => max >= entity.Price);
+                }
+                if(filters.ContainsKey("type") && filters["type"] is PostType type)
+                {
+                    query = query.Where(entity => entity.PostType == type);
+                }
+                if (filters.ContainsKey("categoryid") && filters["categoryid"] is int categoryid)
+                {
+                    query = query.Where(entity => entity.CategoryID == categoryid);
+                }
+                if (filters.ContainsKey("contains") && filters["contains"] is String contains)
+                {
+                    query = query.Where(entity => EF.Functions.Like(entity.ContentText, $"%{contains}%"));
+                }
+                return query.ToList();
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in getting filtered feed: {ex.Message}");
+                return new List<SalePost>();
+            }
+        }
+
+        public Guid AddPost(SalePostAddRequest post)
+        {
+            try
+            {
+                SalePost p = post.ToSalePost();
+                _dbConnector.SalePosts.Add(p);
                 _dbConnector.SaveChanges();
-                return post.PostID;
+                if (post.Images != null)
+                {
+                    foreach (var i in post.Images)
+                    {
+                        _dbConnector.ImageCollections.Add(new ImageCollection(i, p.PostID));
+                    }
+                }
+                return p.PostID;
             }
             catch (Exception ex)
             {

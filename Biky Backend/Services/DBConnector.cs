@@ -6,7 +6,7 @@ namespace Services
 {
     public class DBConnector : DbContext
     {
-        public DbSet<Category> Categories { get; set; }
+        public DbSet<Entities.CategorySystem.Category> CategoriesComposite { get; set; }
         public DbSet<CategoryCollection> CategoryCollections { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Follow> Follows { get; set; }
@@ -17,6 +17,8 @@ namespace Services
         public DbSet<SalePost> SalePosts { get; set; }
         public DbSet<SocialMediaPost> SocialMediaPosts { get; set; }
         public DbSet<User> Users { get; set; }
+
+        public DbSet<Entities.Category> Categories { get; set; }
         
         public DBConnector(DbContextOptions<DBConnector> options) : base(options)
         {

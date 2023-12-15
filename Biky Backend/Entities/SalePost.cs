@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
-using Entities.CategorySystem;
+
 
 namespace Entities
 {
@@ -16,10 +16,10 @@ namespace Entities
     {
         public PostType PostType { get; set; }
 
-        public string Price { get; set; }
+        public decimal Price { get; set; }
 
         [ForeignKey("Category")]
-        public Guid CategoryID { get; set; }
+        public int CategoryID { get; set; }
 
         public virtual Category Category { get; set; }
     }
