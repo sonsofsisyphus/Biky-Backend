@@ -5,6 +5,8 @@ using Entities;
 using Biky_Backend.Services;
 using Biky_Backend.Services.DTO;
 using Biky_Backend.ActionFilters;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Biky_Backend.Controllers
 {
@@ -132,10 +134,12 @@ namespace Biky_Backend.Controllers
 
         [HttpGet]
         [Route("GetFollowings")]
-        public IActionResult GetFollowingsFeed(Guid userID)
+        [Authorize]
+        public IActionResult GetFollowingsFeed()
         {
             try
             {
+                var userID = new Guid(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
                 var result = _feedService.GetSaleFollowings(userID);
                 if (result != null)
                     return Ok(result);

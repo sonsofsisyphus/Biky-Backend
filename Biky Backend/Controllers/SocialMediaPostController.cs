@@ -4,6 +4,7 @@ using Entities;
 using Microsoft.AspNetCore.Mvc;
 using Services;
 using Services.DTO;
+using System.Security.Claims;
 
 namespace Biky_Backend.Controllers
 {
@@ -73,8 +74,9 @@ namespace Biky_Backend.Controllers
 
         [HttpGet]
         [Route("GetAllFeed")]
-        public IActionResult GetAllFeed( Guid userID)
+        public IActionResult GetAllFeed()
         {
+            var userID = new Guid(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
             var result = _feedService.GetSocialMediaAll(userID);
             if (result != null)
                 return Ok(result);
@@ -83,8 +85,9 @@ namespace Biky_Backend.Controllers
 
         [HttpGet]
         [Route("GetFollowingsFeed")]
-        public IActionResult GetFollowingsFeed(Guid userID)
+        public IActionResult GetFollowingsFeed()
         {
+            var userID = new Guid(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
             var result = _feedService.GetSocialMediaFollowings(userID);
             if (result != null)
                 return Ok(result);
