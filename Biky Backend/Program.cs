@@ -6,11 +6,15 @@ using Biky_Backend.Options;
 using Services;
 using Services.Authentication;
 using Biky_Backend.Services;
+using Biky_Backend.ActionFilters;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add(new UserIdInjectionFilter());
+});
 
 // Add database context
 builder.Services.AddDbContext<DBConnector>(options =>

@@ -1,3 +1,4 @@
+using Biky_Backend.ActionFilters;
 using Microsoft.AspNetCore.Mvc;
 using Services;
 using Services.DTO;
@@ -19,6 +20,7 @@ namespace Biky_Backend.Controllers
 
         [HttpPost]
         [Route("Add")]
+        [InjectUserId(typeof(CommentAddRequest), "AuthorID")]
         public IActionResult AddComment([FromBody] CommentAddRequest comment)
         {
             try

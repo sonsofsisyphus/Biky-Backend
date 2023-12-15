@@ -4,6 +4,7 @@ using Services.DTO;
 using Entities;
 using Biky_Backend.Services;
 using Biky_Backend.Services.DTO;
+using Biky_Backend.ActionFilters;
 
 namespace Biky_Backend.Controllers
 {
@@ -58,6 +59,7 @@ namespace Biky_Backend.Controllers
 
         [HttpPost]
         [Route("Add")]
+        [InjectUserId(typeof(SalePostAddRequest), "AuthorID")]
         public IActionResult AddPost([FromBody] SalePostAddRequest addRequest)
         {
             try

@@ -3,6 +3,7 @@ using Services;
 using Entities;
 using Newtonsoft.Json;
 using Biky_Backend.Services.DTO;
+using Biky_Backend.ActionFilters;
 
 namespace Biky_Backend.Controllers
 {
@@ -21,6 +22,7 @@ namespace Biky_Backend.Controllers
 
         [HttpPost]
         [Route("Add")]
+        [InjectUserId(typeof(LikeRequest), "UserID")]
         public IActionResult AddLike([FromBody] LikeRequest like)
         {
             try
@@ -37,6 +39,7 @@ namespace Biky_Backend.Controllers
 
         [HttpPost]
         [Route("Remove")]
+        [InjectUserId(typeof(LikeRequest), "UserID")]
         public IActionResult RemoveLike([FromBody] LikeRequest like)
         {
             try

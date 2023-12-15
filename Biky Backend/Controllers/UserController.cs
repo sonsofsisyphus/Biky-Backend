@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Services;
-using Entities;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Authorization;
 using Services.DTO;
 using Services.Authentication;
 using Biky_Backend.Services.DTO;
+using Biky_Backend.ActionFilters;
 
 namespace Biky_Backend.Controllers
 {
@@ -50,6 +50,7 @@ namespace Biky_Backend.Controllers
 
         [HttpGet]
         [Route("AddFollowing")]
+        [InjectUserId(typeof(FollowRequest), "FollowerID")]
         public IActionResult AddFollowing([FromQuery] FollowRequest follow)
         {
             _userService.AddFollowing(follow);
@@ -126,13 +127,6 @@ namespace Biky_Backend.Controllers
             }
 
             return Ok(new AuthResult() { Result = true });
-        }
-
-        [Authorize(Roles = "Normal")]
-        [HttpGet]
-        public IActionResult LoginTest() 
-        {
-            return Ok();
         }
 
         [HttpGet]

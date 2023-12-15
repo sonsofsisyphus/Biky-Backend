@@ -1,3 +1,4 @@
+using Biky_Backend.ActionFilters;
 using Biky_Backend.Services;
 using Entities;
 using Microsoft.AspNetCore.Mvc;
@@ -41,6 +42,7 @@ namespace Biky_Backend.Controllers
 
         [HttpPost]
         [Route("Add")]
+        [InjectUserId(typeof(SocialMediaPostAddRequest), "AuthorID")]
         public IActionResult AddPost([FromBody] SocialMediaPostAddRequest addRequest)
         {
             var result = _socialMediaPostService.AddPost(addRequest);
