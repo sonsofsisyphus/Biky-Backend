@@ -365,3 +365,7 @@ FodyWeavers.xsd
 /Biky Backend/Migrations/DBConnectorModelSnapshot.cs
 /Biky Backend/Migrations/20231211232712_InitialCreate.cs
 /Biky Backend/Migrations/20231211232712_InitialCreate.Designer.cs
+/Biky Backend/Migrations/20231214222338_InitialCreate.cs
+/Biky Backend/Migrations/20231214222338_InitialCreate.Designer.cs
+/Biky Backend/sqlite3.db-shm
+/Biky Backend/sqlite3.db-wal
