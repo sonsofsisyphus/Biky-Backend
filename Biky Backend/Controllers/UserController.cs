@@ -141,5 +141,23 @@ namespace Biky_Backend.Controllers
         {
             return Ok(_userService.GetAllUsers());
         }
+
+        [HttpGet]
+        [Route("GetProfile")]
+        public IActionResult GetProfile(Guid userID)
+        {
+            try
+            {
+                var result = _userService.GetProfileByID(userID);
+                if (result != null) return Ok(result);
+                return NotFound();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error accessing profile.");
+                return BadRequest("Error accessing profile.");
+            }
+        }
+                 
     }
 }

@@ -58,6 +58,20 @@ namespace Services
             }
         }
 
+        public int CountFollowersByID(Guid userID)
+        {
+            try
+            {
+                return _dbConnector.Follows
+                    .Count(a => a.FollowerID == userID);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in counting followers: {ex.Message}");
+                return -1;
+            }
+        }
+
         public List<Guid> GetFollowingsByID(Guid userID)
         {
             try
@@ -71,6 +85,20 @@ namespace Services
             {
                 Console.WriteLine($"Error in GetFollowingsByID: {ex.Message}");
                 return new List<Guid>();
+            }
+        }
+
+        public int CountFollowingsByID(Guid userID)
+        {
+            try
+            {
+                return _dbConnector.Follows
+                    .Count(a => a.FollowingID == userID);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in counting followings: {ex.Message}");
+                return -1;
             }
         }
 
@@ -218,6 +246,19 @@ namespace Services
         public List<User> GetAllUsers()
         {
             return _dbConnector.Users.ToList();
+        }
+
+        public ProfileSendRequest GetProfileByID(Guid userID)
+        {
+            List<Guid> allSocialMediaPosts = _dbConnector.SocialMediaPosts.Where(p => p.AuthorID == userID).Select(p => p.PostID).ToList();
+            int postNumber = allSocialMediaPosts.Count + _dbConnector.SalePosts.Count(p => p.AuthorID == userID);
+            int likeNumber = _dbConnector.Likes.Count(l => allSocialMediaPosts.Contains(l.PostID));
+            return new ProfileSendRequest(GetUserByID(userID), 
+                CountFollowersByID(userID), 
+                CountFollowingsByID(userID),
+                postNumber,
+                likeNumber
+                );
         }
     }
 }
