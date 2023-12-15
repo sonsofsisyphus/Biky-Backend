@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using Microsoft.AspNetCore.Authorization;
 using Services.DTO;
 using Services.Authentication;
+using Biky_Backend.Services.DTO;
 
 namespace Biky_Backend.Controllers
 {
@@ -27,7 +28,7 @@ namespace Biky_Backend.Controllers
         [Route("GetUser")]
         public IActionResult GetUserByID([FromQuery] Guid userID)
         {
-            User user = _userService.GetUserByID(userID);
+            var user = _userService.GetUserByID(userID);
             return Content(JsonConvert.SerializeObject(user), "application/json");
         }
 
@@ -49,7 +50,7 @@ namespace Biky_Backend.Controllers
 
         [HttpGet]
         [Route("AddFollowing")]
-        public IActionResult AddFollowing([FromQuery] Follow follow)
+        public IActionResult AddFollowing([FromQuery] FollowRequest follow)
         {
             _userService.AddFollowing(follow);
             return Content("", "application/json");
@@ -134,5 +135,11 @@ namespace Biky_Backend.Controllers
             return Ok();
         }
 
+        [HttpGet]
+        [Route("GetAllUsers")]
+        public IActionResult GetAllUsers()
+        {
+            return Ok(_userService.GetAllUsers());
+        }
     }
 }

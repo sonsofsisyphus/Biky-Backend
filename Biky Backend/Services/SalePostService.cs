@@ -81,7 +81,6 @@ namespace Services
                     existingPost.AuthorID = salePost.AuthorID;
                     existingPost.ContentText = salePost.ContentText;
                     existingPost.PostTime = salePost.PostTime;
-                    existingPost.ImagesID = salePost.ImagesID;
                     existingPost.PostType = salePost.PostType;
                     existingPost.Price = salePost.Price;
                     existingPost.Category = salePost.Category;

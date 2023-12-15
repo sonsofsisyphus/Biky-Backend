@@ -1,3 +1,4 @@
+using Biky_Backend.Services;
 using Entities;
 using Microsoft.AspNetCore.Mvc;
 using Services;
@@ -11,11 +12,13 @@ namespace Biky_Backend.Controllers
     {
         private readonly ILogger<UserController> _logger;
         private readonly SocialMediaPostService _socialMediaPostService;
+        private readonly FeedService _feedService;
 
-        public SocialMediaPostController(ILogger<UserController> logger, SocialMediaPostService socialMediaPostService)
+        public SocialMediaPostController(ILogger<UserController> logger, SocialMediaPostService socialMediaPostService, FeedService feedService)
         {
             _logger = logger;
             _socialMediaPostService = socialMediaPostService;
+            _feedService = feedService;
         }
 
         [HttpGet]
@@ -40,7 +43,7 @@ namespace Biky_Backend.Controllers
         [Route("Add")]
         public IActionResult AddPost([FromBody] SocialMediaPostAddRequest addRequest)
         {
-            var result = _socialMediaPostService.AddPost(addRequest.ToSocialMediaPost());
+            var result = _socialMediaPostService.AddPost(addRequest);
             if (result != null)
                 return CreatedAtAction(nameof(GetPostByPostID), new { result }, result);
             return BadRequest("Post cannot be added");
@@ -64,6 +67,26 @@ namespace Biky_Backend.Controllers
             if (result)
                 return NoContent();
             return NotFound();
+        }
+
+        [HttpGet]
+        [Route("GetAllFeed")]
+        public IActionResult GetAllFeed( Guid userID)
+        {
+            var result = _feedService.GetSocialMediaAll(userID);
+            if (result != null)
+                return Ok(result);
+            return BadRequest("Feed couldn't be retrieved");
+        }
+
+        [HttpGet]
+        [Route("GetFollowingsFeed")]
+        public IActionResult GetFollowingsFeed(Guid userID)
+        {
+            var result = _feedService.GetSocialMediaFollowings(userID);
+            if (result != null)
+                return Ok(result);
+            return BadRequest("Feed couldn't be retrieved");
         }
     }
 }

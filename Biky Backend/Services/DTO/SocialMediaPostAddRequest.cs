@@ -11,7 +11,7 @@ namespace Services.DTO
         [Required]
         public string ContentText { get; set; }
 
-        public Guid Images { get; set; }
+        public List<String>? Images { get; set; }
 
         [Required]
         public bool IsAnonymous { get; set; }
@@ -24,7 +24,6 @@ namespace Services.DTO
                 AuthorID = AuthorID,
                 ContentText = ContentText,
                 PostTime = DateTime.Now,
-                ImagesID = Images,
                 IsAnonymous = IsAnonymous
             };
         }

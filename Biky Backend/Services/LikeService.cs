@@ -1,4 +1,5 @@
-﻿using Entities;
+﻿using Biky_Backend.Services.DTO;
+using Entities;
 using Services.DTO;
 
 namespace Services
@@ -18,7 +19,7 @@ namespace Services
             _notificationService = notificationService;
         }
 
-        public void AddLike(Like like)
+        public void AddLike(LikeRequest like)
         {
             try
             {
@@ -27,10 +28,10 @@ namespace Services
                     _notificationService.AddNotification(new NotificationAddRequest()
                     {
                         ReceiverID = _socialMediaPostService.PostOwner(like.PostID),
-                        Content = $"{like.User.Nickname} has liked your post"
+                        Content = $"{_userService.GetUserByID(like.UserID).Nickname} has liked your post"
                     });
 
-                    _dbConnector.Likes.Add(like);
+                    _dbConnector.Likes.Add(like.ToLike());
                     _dbConnector.SaveChanges();
                 }
             }
@@ -40,13 +41,14 @@ namespace Services
             }
         }
 
-        public void RemoveLike(Like like)
+        public void RemoveLike(LikeRequest like)
         {
             try
             {
                 if (ValidateLike(like) && Exists(like))
                 {
-                    _dbConnector.Likes.Remove(like);
+                    var likeToRemove = _dbConnector.Likes.FirstOrDefault(l => (l.PostID == like.PostID && l.UserID == like.UserID));
+                    if (likeToRemove != null) _dbConnector.Remove(likeToRemove);
                     _dbConnector.SaveChanges();
                 }
             }
@@ -56,7 +58,7 @@ namespace Services
             }
         }
 
-        public bool ValidateLike(Like like)
+        public bool ValidateLike(LikeRequest like)
         {
             try
             {
@@ -76,16 +78,21 @@ namespace Services
             }
         }
 
-        public bool Exists(Like like)
+        public bool Exists(LikeRequest like)
         {
             try
             {
-                return _dbConnector.Likes.Contains(like);
+                return _dbConnector.Likes.Any(l => (l.PostID == like.PostID && l.UserID == like.UserID));
             }
             catch (Exception ex)
             {
                 throw new ApplicationException("Error checking if like exists.", ex);
             }
+        }
+
+        public int CountLike(Guid postID)
+        {
+            return _dbConnector.Likes.Count(l => l.PostID == postID);
         }
     }
 }

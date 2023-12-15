@@ -11,12 +11,7 @@ namespace Entities
         [ForeignKey("Author")]
         public Guid AuthorID { get; set; }
 
-        [ForeignKey("ImageCollection")]
-        public Guid ImagesID { get; set; }
-
         public virtual User Author { get; set; }
-
-        public virtual ImageCollection Images { get; set; }
 
         public string ContentText { get; set; }
 

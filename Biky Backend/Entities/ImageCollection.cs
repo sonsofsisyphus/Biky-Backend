@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Entities
 {
@@ -7,9 +8,19 @@ namespace Entities
         
         [Key]
         public Guid CollectionID { get; set; }
-        public string Image1 { get; set; }
-        public string Image2 { get; set; }
-        public string Image3 { get; set; }
-        public string Image4 { get; set; }
+        public string Image { get; set; }
+
+        [ForeignKey("Post")]
+        public Guid PostID { get; set; }
+
+        public virtual Post Post { get; set; }
+
+        public ImageCollection(string image, Guid postID)
+        {
+            CollectionID = Guid.NewGuid();
+            Image = image;
+            PostID = postID;
+        }
+
     }
 }

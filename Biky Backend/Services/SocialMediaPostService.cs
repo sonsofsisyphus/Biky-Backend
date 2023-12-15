@@ -1,4 +1,6 @@
 ﻿using Entities;
+using Microsoft.EntityFrameworkCore;
+using Services.DTO;
 
 namespace Services
 {
@@ -42,13 +44,17 @@ namespace Services
             }
         }
 
-        public List<SocialMediaPost> GetAllFeed()
+        public List<SocialMediaPost> GetAllFeed(Guid userID)
         {
             try
             {
-                return _dbConnector.SocialMediaPosts
+                 var p = _dbConnector.SocialMediaPosts
                     .OrderByDescending(item => item.PostTime)
+                    .Include(p => p.Author)
                     .ToList();
+                
+                return p;
+                
             }
             catch (Exception ex)
             {
@@ -74,13 +80,23 @@ namespace Services
             }
         }
 
-        public Guid AddPost(SocialMediaPost post)
+        public Guid AddPost(SocialMediaPostAddRequest post)
         {
             try
             {
-                _dbConnector.SocialMediaPosts.Add(post);
+
+                var p = post.ToSocialMediaPost();
+                _dbConnector.SocialMediaPosts.Add(p);
                 _dbConnector.SaveChanges();
-                return post.PostID;
+                if (post.Images != null)
+                {
+                    foreach (var i in post.Images)
+                    {
+                        _dbConnector.ImageCollections.Add(new ImageCollection(i, p.PostID));
+                    }
+                }
+                _dbConnector.SaveChanges();
+                return p.PostID;
             }
             catch (Exception ex)
             {
@@ -99,7 +115,6 @@ namespace Services
                     existingPost.AuthorID = updatedPost.AuthorID;
                     existingPost.ContentText = updatedPost.ContentText;
                     existingPost.PostTime = updatedPost.PostTime;
-                    existingPost.ImagesID = updatedPost.ImagesID;
                     existingPost.IsAnonymous = updatedPost.IsAnonymous;
 
                     _dbConnector.SaveChanges();

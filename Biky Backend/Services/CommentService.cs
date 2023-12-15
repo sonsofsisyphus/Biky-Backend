@@ -3,6 +3,8 @@ using System.Linq;
 using System.Collections.Generic;
 using Entities;
 using Services.DTO;
+using Biky_Backend.Services.DTO;
+using Microsoft.EntityFrameworkCore;
 
 namespace Services
 {
@@ -29,7 +31,7 @@ namespace Services
                 _notificationService.AddNotification(new NotificationAddRequest()
                 {
                     ReceiverID = _socialMediaPostService.PostOwner(comment.PostID),
-                    Content = $"{comment.Author.Nickname} has made a comment on your post"
+                    Content = $"{_userService.GetUserByID(comment.AuthorID).Nickname} has made a comment on your post"
                 });
                 _dbContext.Comments.Add(comment);
                 _dbContext.SaveChanges();
@@ -58,9 +60,9 @@ namespace Services
             }
         }
 
-        public List<Comment> GetCommentByPost(Guid postID)
+        public List<CommentSendRequest> GetCommentByPost(Guid postID)
         {
-            return _dbContext.Comments.Where(a => a.PostID == postID).ToList();
+            return _dbContext.Comments.Where(a => a.PostID == postID).Include(c => c.Author).Select(CommentSendRequest.ToCommentSendRequest).ToList();
         }
 
         public Comment? GetCommentByID(Guid commentID)

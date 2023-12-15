@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Entities;
+using Microsoft.AspNetCore.Http;
 
 namespace Services
 {
     public class ImageService
     {
+        private readonly DBConnector _dbConnector;
+
         private readonly List<string> allowedFileTypes = new List<string>()
         {
             ".png", ".jpg", ".jpeg", ".webp", ".gif"
@@ -49,5 +52,6 @@ namespace Services
                 throw new ArgumentException("This file type is not allowed.");
             }
         }
+        
     }
 }

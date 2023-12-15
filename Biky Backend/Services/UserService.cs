@@ -1,4 +1,5 @@
-﻿using Entities;
+﻿using Biky_Backend.Services.DTO;
+using Entities;
 using Services.DTO;
 
 namespace Services
@@ -14,11 +15,12 @@ namespace Services
             _notificationService = notificationService;
         }
 
-        public User? GetUserByID(Guid userID)
+        public UserSendRequest? GetUserByID(Guid userID)
         {
             try
             {
-                return _dbConnector.Users.FirstOrDefault(user => user.UserID == userID);
+                return UserSendRequest.ToUserSendRequest(_dbConnector.Users.FirstOrDefault(user => user.UserID == userID));
+              
             }
             catch (Exception ex)
             {
@@ -72,7 +74,7 @@ namespace Services
             }
         }
 
-        public void AddFollowing(Follow follow)
+        public void AddFollowing(FollowRequest follow)
         {
             try
             {
@@ -81,10 +83,10 @@ namespace Services
                     _notificationService.AddNotification(new DTO.NotificationAddRequest()
                     {
                         ReceiverID = follow.FollowerID,
-                        Content = $"{follow.Following.Nickname} has followed you"
+                        Content = $"{GetUserByID(follow.FollowingID).Nickname} has followed you"
                     });
 
-                    _dbConnector.Follows.Add(follow);
+                    _dbConnector.Follows.Add(follow.ToFollow());
                     _dbConnector.SaveChanges();
                 }
             }
@@ -94,7 +96,7 @@ namespace Services
             }
         }
 
-        public void RemoveFollowing(Follow follow)
+        public void RemoveFollowing(FollowRequest follow)
         {
             try
             {
@@ -117,7 +119,7 @@ namespace Services
             }
         }
 
-        public bool ValidateFollowing(Follow follow)
+        public bool ValidateFollowing(FollowRequest follow)
         {
             try
             {
@@ -211,6 +213,11 @@ namespace Services
                 Console.WriteLine($"Error in Register: {ex.Message}");
                 return false;
             }
+        }
+
+        public List<User> GetAllUsers()
+        {
+            return _dbConnector.Users.ToList();
         }
     }
 }

@@ -35,6 +35,11 @@ namespace Services
                 .Property(p => p.PostType)
                 .HasConversion<int>();
 
+            modelBuilder
+                .Entity<User>()
+                .Property(p => p.ProfileImage)
+                .IsRequired(false);
+
             // To set default value for datetime
             // modelBuilder
             //    .Entity<Post>()

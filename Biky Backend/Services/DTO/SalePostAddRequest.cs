@@ -30,7 +30,6 @@ namespace Services.DTO
                 AuthorID = AuthorID,
                 ContentText = ContentText,
                 PostTime = DateTime.Now,
-                ImagesID = Images,
                 PostType = PostType,
                 Price = Price,
                 CategoryID = Category

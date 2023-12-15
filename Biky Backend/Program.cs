@@ -5,6 +5,7 @@ using Microsoft.OpenApi.Models;
 using Biky_Backend.Options;
 using Services;
 using Services.Authentication;
+using Biky_Backend.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,15 +17,16 @@ builder.Services.AddDbContext<DBConnector>(options =>
 {
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
 }, ServiceLifetime.Scoped);
-
 builder.Services.AddScoped<JwtProvider>();
 builder.Services.AddScoped<UserService>();
+builder.Services.AddTransient<ImageCollectionService>();
 builder.Services.AddScoped<SocialMediaPostService>();
 builder.Services.AddScoped<SalePostService>();
 builder.Services.AddScoped<LikeService>();
 builder.Services.AddScoped<CommentService>();
 builder.Services.AddScoped<NotificationService>();
 builder.Services.AddTransient<ImageService>();
+builder.Services.AddTransient<FeedService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Services;
 using Entities;
 using Newtonsoft.Json;
+using Biky_Backend.Services.DTO;
 
 namespace Biky_Backend.Controllers
 {
@@ -20,7 +21,7 @@ namespace Biky_Backend.Controllers
 
         [HttpPost]
         [Route("Add")]
-        public IActionResult AddLike([FromBody] Like like)
+        public IActionResult AddLike([FromBody] LikeRequest like)
         {
             try
             {
@@ -36,7 +37,7 @@ namespace Biky_Backend.Controllers
 
         [HttpPost]
         [Route("Remove")]
-        public IActionResult RemoveLike([FromBody] Like like)
+        public IActionResult RemoveLike([FromBody] LikeRequest like)
         {
             try
             {
@@ -52,7 +53,7 @@ namespace Biky_Backend.Controllers
 
         [HttpGet]
         [Route("Exists")]
-        public IActionResult LikeExists([FromQuery] Like like)
+        public IActionResult LikeExists([FromQuery] LikeRequest like)
         {
             try
             {
