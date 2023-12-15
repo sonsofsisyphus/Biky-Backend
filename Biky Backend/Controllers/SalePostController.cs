@@ -3,6 +3,7 @@ using Services;
 using Services.DTO;
 using Entities;
 using Biky_Backend.Services;
+using Biky_Backend.Services.DTO;
 
 namespace Biky_Backend.Controllers
 {
@@ -116,6 +117,42 @@ namespace Biky_Backend.Controllers
             try
             {
                 var result = _feedService.GetSaleAll();
+                if (result != null)
+                    return Ok(result);
+                return NotFound();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting feed.");
+                return BadRequest("Error getting feed.");
+            }
+        }
+
+        [HttpGet]
+        [Route("GetFollowings")]
+        public IActionResult GetFollowingsFeed(Guid userID)
+        {
+            try
+            {
+                var result = _feedService.GetSaleFollowings(userID);
+                if (result != null)
+                    return Ok(result);
+                return NotFound();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting feed.");
+                return BadRequest("Error getting feed.");
+            }
+        }
+
+        [HttpPost]
+        [Route("GetFiltered")]
+        public IActionResult GetFilteredFeed([FromBody] SaleFilter filters)
+        {
+            try
+            {
+                var result = _feedService.GetSaleFiltered(filters);
                 if (result != null)
                     return Ok(result);
                 return NotFound();

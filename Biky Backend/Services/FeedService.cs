@@ -77,7 +77,7 @@ namespace Biky_Backend.Services
             return ConvertSaleToSend(posts);
         }
 
-        public List<SalePostSendRequest> GetSaleFiltered(Guid userID, Dictionary<String, Object> filters) {
+        public List<SalePostSendRequest> GetSaleFiltered(SaleFilter filters) {
             List<SalePost>? posts = _salePostService.GetFilteredFeed(filters);
             return ConvertSaleToSend(posts);
         }

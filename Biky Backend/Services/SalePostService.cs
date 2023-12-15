@@ -1,4 +1,5 @@
-﻿using Entities;
+﻿using Biky_Backend.Services.DTO;
+using Entities;
 using Microsoft.EntityFrameworkCore;
 using Services.DTO;
 using System;
@@ -82,32 +83,34 @@ namespace Services
             }
         }
 
-        public List<SalePost> GetFilteredFeed(Dictionary<String, Object> filters)
+        public List<SalePost> GetFilteredFeed(SaleFilter filters)
         {
             try
             {
                 var query = _dbConnector.SalePosts.AsQueryable();
-                if (filters.ContainsKey("min") && filters["low"] is decimal low)
+                if (filters.min != null)
                 {
-                    query = query.Where(entity => low >= entity.Price);
+                    query = query.Where(entity => filters.min <= entity.Price);
                 }
-                if (filters.ContainsKey("max") && filters["max"] is decimal max)
+                if (filters.max != null)
                 {
-                    query = query.Where(entity => max >= entity.Price);
+                    query = query.Where(entity => filters.max >= entity.Price);
                 }
-                if(filters.ContainsKey("type") && filters["type"] is PostType type)
+                if(filters.type != null)
                 {
-                    query = query.Where(entity => entity.PostType == type);
+                    query = query.Where(entity => entity.PostType == filters.type);
                 }
-                if (filters.ContainsKey("categoryid") && filters["categoryid"] is int categoryid)
+                if (filters.categoryid != null)
                 {
-                    query = query.Where(entity => entity.CategoryID == categoryid);
+                    query = query.Where(entity => entity.CategoryID == filters.categoryid);
                 }
-                if (filters.ContainsKey("contains") && filters["contains"] is String contains)
+                if (filters.contains != null)
                 {
-                    query = query.Where(entity => EF.Functions.Like(entity.ContentText, $"%{contains}%"));
+                    query = query.Where(entity => EF.Functions.Like(entity.ContentText, $"%{filters.contains}%"));
                 }
-                return query.ToList();
+                return query.Include(p => p.Author)
+                    .OrderByDescending(item => item.PostTime)
+                    .ToList();
 
             }
             catch (Exception ex)
