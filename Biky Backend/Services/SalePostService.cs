@@ -192,5 +192,31 @@ namespace Services
                 return false;
             }
         }
+
+        public bool ValidateID(Guid postID)
+        {
+            try
+            {
+                return _dbConnector.SalePosts.Any(a => a.PostID == postID);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in ValidateID: {ex.Message}");
+                return false;
+            }
+        }
+        public Guid PostOwner(Guid postID)
+        {
+            try
+            {
+                var post = _dbConnector.SalePosts.SingleOrDefault(a => a.PostID == postID);
+                return post?.AuthorID ?? Guid.Empty;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in PostOwner: {ex.Message}");
+                return Guid.Empty;
+            }
+        }
     }
 }

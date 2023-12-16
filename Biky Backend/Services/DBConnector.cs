@@ -1,4 +1,3 @@
-using Biky_Backend.Entities;
 using Entities;
 using Entities.CategorySystem;
 using Microsoft.EntityFrameworkCore;

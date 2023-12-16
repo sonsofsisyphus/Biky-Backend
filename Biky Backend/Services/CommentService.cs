@@ -13,13 +13,15 @@ namespace Services
         private readonly DBConnector _dbContext;
         private readonly UserService _userService;
         private readonly SocialMediaPostService _socialMediaPostService;
+        private readonly SalePostService _salePostService;
         private readonly NotificationService _notificationService;
 
-        public CommentService(DBConnector dbContext, UserService userService, SocialMediaPostService socialMediaPostService, NotificationService notificationService)
+        public CommentService(DBConnector dbContext, UserService userService, SocialMediaPostService socialMediaPostService, SalePostService salePostService, NotificationService notificationService)
         {
             _dbContext = dbContext;
             _userService = userService;
             _socialMediaPostService = socialMediaPostService;
+            _salePostService = salePostService;
             _notificationService = notificationService;
         }
 
@@ -30,7 +32,8 @@ namespace Services
             {
                 _notificationService.AddNotification(new NotificationAddRequest()
                 {
-                    ReceiverID = _socialMediaPostService.PostOwner(comment.PostID),
+         
+                    ReceiverID = _socialMediaPostService.ValidateID(comment.PostID) ? _socialMediaPostService.PostOwner(comment.PostID) : _salePostService.PostOwner(comment.PostID),
                     Content = $"{_userService.GetUserByID(comment.AuthorID).Nickname} has made a comment on your post"
                 });
                 _dbContext.Comments.Add(comment);
@@ -76,7 +79,7 @@ namespace Services
             {
                 throw new ArgumentException("Given UserID doesn't exist.");
             }
-            else if (!_socialMediaPostService.ValidateID(comment.PostID))
+            else if (!(_socialMediaPostService.ValidateID(comment.PostID)|| _salePostService.ValidateID(comment.PostID)))
             {
                 throw new ArgumentException("Given PostID doesn't exist.");
             }

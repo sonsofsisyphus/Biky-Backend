@@ -1,7 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace Biky_Backend.Entities
+namespace Entities
 {
     public enum ReportType
     {
@@ -16,6 +15,8 @@ namespace Biky_Backend.Entities
         public Guid ReportID { get; set; }
 
         public Guid AuthorID { get; set; }
+
+        public Guid ReportedID { get; set; }
 
         public ReportType ReportType { get; set; }
 
