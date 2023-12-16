@@ -24,6 +24,8 @@ namespace Services
         public DbSet<Chat> Chats { get; set; }
 
         public DbSet<Message> Messages { get; set; }
+        
+        public DbSet<Report> Reports { get; set; }
 
         public DBConnector(DbContextOptions<DBConnector> options) : base(options)
         {
