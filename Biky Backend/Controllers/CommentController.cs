@@ -55,7 +55,7 @@ namespace Biky_Backend.Controllers
 
         [HttpGet]
         [Route("GetByID")]
-        public IActionResult GetCommentByID([FromQuery] Guid commentID)
+        public IActionResult GetCommentByID( Guid commentID)
         {
             try
             {
@@ -73,7 +73,7 @@ namespace Biky_Backend.Controllers
 
         [HttpGet]
         [Route("GetByPost")]
-        public IActionResult GetCommentByPost([FromQuery] Guid postID)
+        public IActionResult GetCommentByPost( Guid postID)
         {
             try
             {

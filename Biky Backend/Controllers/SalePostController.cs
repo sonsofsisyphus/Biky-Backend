@@ -98,7 +98,7 @@ namespace Biky_Backend.Controllers
 
         [HttpDelete]
         [Route("Remove")]
-        public IActionResult RemovePost([FromQuery] Guid postID)
+        public IActionResult RemovePost(Guid postID)
         {
             try
             {

@@ -26,7 +26,7 @@ namespace Biky_Backend.Controllers
 
         [HttpGet]
         [Route("GetUser")]
-        public IActionResult GetUserByID([FromQuery] Guid userID)
+        public IActionResult GetUserByID(Guid userID)
         {
             var user = _userService.GetUserByID(userID);
             return Content(JsonConvert.SerializeObject(user), "application/json");
@@ -34,7 +34,7 @@ namespace Biky_Backend.Controllers
 
         [HttpGet]
         [Route("GetFollowers")]
-        public IActionResult GetFollowersByID([FromQuery] Guid userID)
+        public IActionResult GetFollowersByID(Guid userID)
         {
             List<Guid> followers = _userService.GetFollowersByID(userID);
             return Content(JsonConvert.SerializeObject(followers), "application/json");
@@ -42,7 +42,7 @@ namespace Biky_Backend.Controllers
 
         [HttpGet]
         [Route("GetFollowings")]
-        public IActionResult GetFollowingsByID([FromQuery] Guid userID)
+        public IActionResult GetFollowingsByID(Guid userID)
         {
             List<Guid> followings = _userService.GetFollowingsByID(userID);
             return Content(JsonConvert.SerializeObject(followings), "application/json");
@@ -51,7 +51,7 @@ namespace Biky_Backend.Controllers
         [HttpGet]
         [Route("AddFollowing")]
         [InjectUserId(typeof(FollowRequest), "FollowerID")]
-        public IActionResult AddFollowing([FromQuery] FollowRequest follow)
+        public IActionResult AddFollowing(FollowRequest follow)
         {
             _userService.AddFollowing(follow);
             return Content("", "application/json");

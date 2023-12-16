@@ -56,7 +56,7 @@ namespace Biky_Backend.Controllers
 
         [HttpGet]
         [Route("Exists")]
-        public IActionResult LikeExists([FromQuery] LikeRequest like)
+        public IActionResult LikeExists(LikeRequest like)
         {
             try
             {

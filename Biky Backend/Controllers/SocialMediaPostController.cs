@@ -25,7 +25,7 @@ namespace Biky_Backend.Controllers
 
         [HttpGet]
         [Route("GetPost")]
-        public IActionResult GetPostByPostID([FromQuery] Guid postID)
+        public IActionResult GetPostByPostID(Guid postID)
         {
             var post = _socialMediaPostService.GetPostByPostID(postID);
             if (post != null)
@@ -35,7 +35,7 @@ namespace Biky_Backend.Controllers
 
         [HttpGet]
         [Route("GetPostByUser")]
-        public IActionResult GetPostByAuthorID([FromQuery] Guid authorID)
+        public IActionResult GetPostByAuthorID( Guid authorID)
         {
             List<SocialMediaPost> posts = _socialMediaPostService.GetPostByUserID(authorID);
             return Ok(posts);
@@ -64,7 +64,7 @@ namespace Biky_Backend.Controllers
 
         [HttpDelete]
         [Route("Remove")]
-        public IActionResult RemovePost([FromQuery] Guid postID)
+        public IActionResult RemovePost(Guid postID)
         {
             var result = _socialMediaPostService.RemovePost(postID);
             if (result)
