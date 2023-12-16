@@ -44,7 +44,7 @@ namespace Services
             }
         }
 
-        public List<SocialMediaPost> GetAllFeed(Guid userID)
+        public List<SocialMediaPost> GetAllFeed()
         {
             try
             {

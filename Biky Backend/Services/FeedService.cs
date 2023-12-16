@@ -44,6 +44,18 @@ namespace Biky_Backend.Services
             return p;
         }
 
+        private List<SocialMediaPostSendRequest> ConvertSocialToSend(List<SocialMediaPost> posts)
+        {
+            var p = posts.ConvertAll(p => SocialMediaPostSendRequest.ToSocialMediaPostSendRequest(p,
+                _likeService.CountLike(p.PostID),
+                false));
+            foreach (var i in p)
+            {
+                i.Images = _imageCollectionService.GetImagesByPost(i.PostID);
+            }
+            return p;
+        }
+
         private List<SalePostSendRequest> ConvertSaleToSend(List<SalePost> posts)
         {
             var p = posts.ConvertAll(p => SalePostSendRequest.ToSalePostSendRequest(p));
@@ -55,8 +67,14 @@ namespace Biky_Backend.Services
         }
         public List<SocialMediaPostSendRequest> GetSocialMediaAll(Guid userID)
         {
-            List<SocialMediaPost>? posts = _socialMediaPostService.GetAllFeed(userID);
+            List<SocialMediaPost>? posts = _socialMediaPostService.GetAllFeed();
             return ConvertSocialToSend(posts, userID);
+        }
+
+        public List<SocialMediaPostSendRequest> GetSocialMediaGuest()
+        {
+            List<SocialMediaPost>? posts = _socialMediaPostService.GetAllFeed();
+            return ConvertSocialToSend(posts);
         }
 
         public List<SocialMediaPostSendRequest> GetSocialMediaFollowings(Guid userID)

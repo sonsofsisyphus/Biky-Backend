@@ -1,3 +1,4 @@
+using Biky_Backend.Entities;
 using Entities;
 using Entities.CategorySystem;
 using Microsoft.EntityFrameworkCore;
@@ -19,7 +20,11 @@ namespace Services
         public DbSet<User> Users { get; set; }
 
         public DbSet<Entities.Category> Categories { get; set; }
-        
+
+        public DbSet<Chat> Chats { get; set; }
+
+        public DbSet<Message> Messages { get; set; }
+
         public DBConnector(DbContextOptions<DBConnector> options) : base(options)
         {
         }

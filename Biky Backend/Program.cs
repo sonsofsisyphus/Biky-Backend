@@ -1,12 +1,11 @@
-using Biky_Backend;
+using Biky_Backend.ActionFilters;
+using Biky_Backend.Options;
+using Biky_Backend.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
-using Biky_Backend.Options;
 using Services;
 using Services.Authentication;
-using Biky_Backend.Services;
-using Biky_Backend.ActionFilters;
 
 var builder = WebApplication.CreateBuilder(args);
 

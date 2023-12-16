@@ -93,5 +93,15 @@ namespace Biky_Backend.Controllers
                 return Ok(result);
             return BadRequest("Feed couldn't be retrieved");
         }
+
+        [HttpGet]
+        [Route("GetGuestFeed")]
+        public IActionResult GetGuestFeed()
+        { 
+            var result = _feedService.GetSocialMediaGuest();
+            if (result != null)
+                return Ok(result);
+            return BadRequest("Feed couldn't be retrieved");
+        }
     }
 }
