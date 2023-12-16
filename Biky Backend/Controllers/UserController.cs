@@ -53,9 +53,27 @@ namespace Biky_Backend.Controllers
         [HttpGet]
         [Route("AddFollowing")]
         [InjectUserId(typeof(FollowRequest), "FollowerID")]
-        public IActionResult AddFollowing(FollowRequest follow)
+        public IActionResult AddFollowing([FromQuery]FollowRequest follow)
         {
             _userService.AddFollowing(follow);
+            return Content("", "application/json");
+        }
+
+        [HttpGet]
+        [Route("CheckFollowing")]
+        [InjectUserId(typeof(FollowRequest), "FollowerID")]
+        public IActionResult CheckFollowing([FromQuery] FollowRequest follow)
+        {
+            _userService.CheckFollowing(follow);
+            return Content("", "application/json");
+        }
+
+        [HttpDelete]
+        [Route("DeleteFollowing")]
+        [InjectUserId(typeof(FollowRequest), "FollowerID")]
+        public IActionResult DeleteFollowing([FromQuery] FollowRequest follow)
+        {
+            _userService.RemoveFollowing(follow);
             return Content("", "application/json");
         }
 
@@ -155,10 +173,10 @@ namespace Biky_Backend.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpGet]
         [Route("UpdateProfile")]
         [InjectUserId(typeof(ProfileEditRequest), "userID")]
-        public IActionResult UpdateProfile(ProfileEditRequest profile)
+        public IActionResult UpdateProfile([FromQuery] ProfileEditRequest profile)
         {
             try
             {

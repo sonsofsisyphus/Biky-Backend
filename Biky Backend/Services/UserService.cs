@@ -125,6 +125,22 @@ namespace Services
             }
         }
 
+        public bool CheckFollowing(FollowRequest follow)
+        {
+            try
+            {
+
+                    return _dbConnector.Follows.Any(f => follow.FollowingID == f.FollowingID && follow.FollowerID == f.FollowerID);
+                    
+                
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in CheckFollowing: {ex.Message}");
+                return false;
+            }
+        }
+
         public void RemoveFollowing(FollowRequest follow)
         {
             try

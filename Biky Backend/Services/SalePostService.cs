@@ -192,5 +192,18 @@ namespace Services
                 return false;
             }
         }
+
+        public bool ValidateID(Guid postID)
+        {
+            try
+            {
+                return _dbConnector.SalePosts.Any(a => a.PostID == postID);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in ValidateID: {ex.Message}");
+                return false;
+            }
+        }
     }
 }
