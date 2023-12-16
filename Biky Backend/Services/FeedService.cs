@@ -83,6 +83,12 @@ namespace Biky_Backend.Services
             return ConvertSocialToSend(posts, userID);
         }
 
+        public List<SocialMediaPostSendRequest> GetSocialMediaByContent(string contains)
+        {
+            List<SocialMediaPost> posts = _socialMediaPostService.GetSearchedFeed(contains);
+            return ConvertSocialToSend(posts);
+        }
+
         public List<SalePostSendRequest> GetSaleAll()
         {
             List<SalePost>? posts = _salePostService.GetAllFeed();

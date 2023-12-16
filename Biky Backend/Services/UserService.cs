@@ -1,5 +1,6 @@
 ﻿using Biky_Backend.Services.DTO;
 using Entities;
+using Microsoft.EntityFrameworkCore;
 using Services.DTO;
 
 namespace Services
@@ -259,6 +260,38 @@ namespace Services
                 postNumber,
                 likeNumber
                 );
+        }
+
+        public List<UserSendRequest> searchUsersByNickname(string contains)
+        {
+            List<User>? users = getUsersByNicknameSearch(contains);
+            return ConvertUserToSend(users);
+        }
+
+        public List<User> getUsersByNicknameSearch(string contains)
+        {
+            try
+            {
+                var query = _dbConnector.Users.AsQueryable();
+                if (!string.IsNullOrEmpty(contains))
+                {
+                    query = query.Where(entity => EF.Functions.Like(entity.Nickname, $"%{contains}%"));
+                }
+                return query.OrderBy(user => user.Nickname).ToList();
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in getting searched users: {ex.Message}");
+                return new List<User>();
+            }
+        }
+
+        private List<UserSendRequest> ConvertUserToSend(List<User> users)
+        {
+            var user = users.ConvertAll(user => UserSendRequest.ToUserSendRequest(user));
+
+            return user;
         }
     }
 }

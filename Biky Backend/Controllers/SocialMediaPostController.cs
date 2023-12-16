@@ -1,5 +1,6 @@
 using Biky_Backend.ActionFilters;
 using Biky_Backend.Services;
+using Biky_Backend.Services.DTO;
 using Entities;
 using Microsoft.AspNetCore.Mvc;
 using Services;
@@ -102,6 +103,24 @@ namespace Biky_Backend.Controllers
             if (result != null)
                 return Ok(result);
             return BadRequest("Feed couldn't be retrieved");
+        }
+
+        [HttpGet]
+        [Route("GetFeedByContent")]
+        public IActionResult GetFeedByContent(string contains)
+        {
+            try
+            {
+                var result = _feedService.GetSocialMediaByContent(contains);
+                if (result != null)
+                    return Ok(result);
+                return NotFound();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting feed.");
+                return BadRequest("Error getting feed.");
+            }
         }
     }
 }

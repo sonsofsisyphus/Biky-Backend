@@ -1,4 +1,5 @@
-﻿using Entities;
+﻿using Biky_Backend.Services.DTO;
+using Entities;
 using Microsoft.EntityFrameworkCore;
 using Services.DTO;
 
@@ -175,6 +176,27 @@ namespace Services
             {
                 Console.WriteLine($"Error in PostOwner: {ex.Message}");
                 return Guid.Empty;
+            }
+        }
+
+        public List<SocialMediaPost> GetSearchedFeed(string contains)
+        {
+            try
+            {
+                var query = _dbConnector.SocialMediaPosts.AsQueryable();
+                if (!string.IsNullOrEmpty(contains))
+                {
+                    query = query.Where(entity => EF.Functions.Like(entity.ContentText, $"%{contains}%"));
+                }
+                return query.Include(p => p.Author)
+                    .OrderByDescending(item => item.PostTime)
+                    .ToList();
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in getting searched social media feed: {ex.Message}");
+                return new List<SocialMediaPost>();
             }
         }
     }

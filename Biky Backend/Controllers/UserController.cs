@@ -6,6 +6,7 @@ using Services.DTO;
 using Services.Authentication;
 using Biky_Backend.Services.DTO;
 using Biky_Backend.ActionFilters;
+using Biky_Backend.Services;
 
 namespace Biky_Backend.Controllers
 {
@@ -152,6 +153,23 @@ namespace Biky_Backend.Controllers
                 return BadRequest("Error accessing profile.");
             }
         }
-                 
+
+        [HttpGet]
+        [Route("SearchUser")]
+        public IActionResult SearchUsersByNickname(string contains)
+        {
+            try
+            {
+                var result = _userService.searchUsersByNickname(contains);
+                if (result != null)
+                    return Ok(result);
+                return NotFound();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting users.");
+                return BadRequest("Error getting users.");
+            }
+        }
     }
 }
