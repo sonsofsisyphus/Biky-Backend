@@ -73,7 +73,7 @@ namespace Biky_Backend.Controllers
 
         [HttpGet]
         [Route("GetByPost")]
-        public IActionResult GetCommentByPost( Guid postID)
+        public IActionResult GetCommentByPost(Guid postID)
         {
             try
             {
@@ -84,6 +84,22 @@ namespace Biky_Backend.Controllers
             {
                 _logger.LogError(ex, "Error getting comments by post ID.");
                 return BadRequest("Error getting comments by post ID.");
+            }
+        }
+
+        [HttpDelete]
+        [Route("Delete")]
+        public IActionResult AddComment(Guid commentID)
+        {
+            try
+            {
+                _commentService.RemoveComment(commentID);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error removing comment.");
+                return BadRequest("Error removing comment.");
             }
         }
     }
