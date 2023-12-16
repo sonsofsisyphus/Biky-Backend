@@ -32,7 +32,8 @@ namespace Services
             {
                 _notificationService.AddNotification(new NotificationAddRequest()
                 {
-                    ReceiverID = _socialMediaPostService.PostOwner(comment.PostID),
+         
+                    ReceiverID = _socialMediaPostService.ValidateID(comment.PostID) ? _socialMediaPostService.PostOwner(comment.PostID) : _salePostService.PostOwner(comment.PostID),
                     Content = $"{_userService.GetUserByID(comment.AuthorID).Nickname} has made a comment on your post"
                 });
                 _dbContext.Comments.Add(comment);

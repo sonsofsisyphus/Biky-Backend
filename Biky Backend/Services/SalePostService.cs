@@ -205,5 +205,18 @@ namespace Services
                 return false;
             }
         }
+        public Guid PostOwner(Guid postID)
+        {
+            try
+            {
+                var post = _dbConnector.SalePosts.SingleOrDefault(a => a.PostID == postID);
+                return post?.AuthorID ?? Guid.Empty;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in PostOwner: {ex.Message}");
+                return Guid.Empty;
+            }
+        }
     }
 }
