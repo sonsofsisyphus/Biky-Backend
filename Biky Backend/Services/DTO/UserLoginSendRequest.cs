@@ -8,6 +8,6 @@ namespace Services.DTO
         public string Token { get; set; }
 
         [Required]
-        public string UserID { get; set; }
+        public Guid UserID { get; set; }
     }
 }
