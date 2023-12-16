@@ -31,6 +31,7 @@ builder.Services.AddScoped<NotificationService>();
 builder.Services.AddTransient<ImageService>();
 builder.Services.AddTransient<FeedService>();
 builder.Services.AddTransient<CategoryService>();
+builder.Services.AddSignalR();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -102,6 +103,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseRouting();
 
 app.UseHttpsRedirection();
 

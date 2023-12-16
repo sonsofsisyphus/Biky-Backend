@@ -21,11 +21,11 @@ namespace Services
 
         public DbSet<Entities.Category> Categories { get; set; }
 
-        public DbSet<Chat> Chats { get; set; }
-
-        public DbSet<Message> Messages { get; set; }
+        public DbSet<ChatMessage> Messages { get; set; }
         
         public DbSet<Report> Reports { get; set; }
+
+        public DbSet<ChatMessage> ChatMessages { get; set; }
 
         public DBConnector(DbContextOptions<DBConnector> options) : base(options)
         {

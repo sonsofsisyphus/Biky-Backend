@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Entities
 {
-    public class Message
+    public class ChatMessage
     {
         [Key]
         public Guid MessageID { get; set; }
@@ -14,9 +14,6 @@ namespace Entities
 
         [ForeignKey("User")]
         public Guid ReceiverID { get; set; }
-
-        [ForeignKey("Chat")]
-        public Guid ChatID { get; set; }
 
         public string Content { get; set; }
 
