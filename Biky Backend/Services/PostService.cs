@@ -15,8 +15,6 @@ namespace Services
             _socialMediaPostService = socialMediaPostService;
         }
 
-
-
         public Post? GetPostByPostID(Guid postID)
         {
             Post? post = dbPosts.FirstOrDefault(post => post.PostID == postID);

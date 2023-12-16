@@ -2,6 +2,7 @@ using Biky_Backend.ActionFilters;
 using Biky_Backend.Services;
 using Biky_Backend.Services.DTO;
 using Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services;
 using Services.DTO;
@@ -75,6 +76,7 @@ namespace Biky_Backend.Controllers
 
         [HttpGet]
         [Route("GetAllFeed")]
+        [Authorize]
         public IActionResult GetAllFeed()
         {
             var userID = new Guid(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
@@ -86,6 +88,7 @@ namespace Biky_Backend.Controllers
 
         [HttpGet]
         [Route("GetFollowingsFeed")]
+        [Authorize]
         public IActionResult GetFollowingsFeed()
         {
             var userID = new Guid(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
