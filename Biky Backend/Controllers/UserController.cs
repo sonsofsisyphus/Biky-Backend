@@ -7,6 +7,7 @@ using Services.Authentication;
 using Biky_Backend.Services.DTO;
 using Biky_Backend.ActionFilters;
 using Biky_Backend.Services;
+using Entities;
 
 namespace Biky_Backend.Controllers
 {
@@ -151,6 +152,23 @@ namespace Biky_Backend.Controllers
             {
                 _logger.LogError(ex, "Error accessing profile.");
                 return BadRequest("Error accessing profile.");
+            }
+        }
+
+        [HttpPost]
+        [Route("UpdateProfile")]
+        [InjectUserId(typeof(ProfileEditRequest), "userID")]
+        public IActionResult UpdateProfile(ProfileEditRequest profile)
+        {
+            try
+            {
+                _userService.UpdateProfile(profile);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error editing profile.");
+                return BadRequest("Error editing profile.");
             }
         }
 

@@ -223,7 +223,7 @@ namespace Services
                 }
 
                 string hashedPassword = BCrypt.Net.BCrypt.HashPassword(request.Password);
-                
+
                 var newUser = new User
                 {
                     UserID = Guid.NewGuid(),
@@ -231,6 +231,7 @@ namespace Services
                     Nickname = request.Nickname,
                     Email = request.Email,
                     Password = hashedPassword,
+                    Description = string.Empty
                 };
 
                 _dbConnector.Users.Add(newUser);
@@ -254,11 +255,13 @@ namespace Services
             List<Guid> allSocialMediaPosts = _dbConnector.SocialMediaPosts.Where(p => p.AuthorID == userID).Select(p => p.PostID).ToList();
             int postNumber = allSocialMediaPosts.Count + _dbConnector.SalePosts.Count(p => p.AuthorID == userID);
             int likeNumber = _dbConnector.Likes.Count(l => allSocialMediaPosts.Contains(l.PostID));
+            string description = GetUserDescription(userID) ?? string.Empty;
             return new ProfileSendRequest(GetUserByID(userID), 
                 CountFollowersByID(userID), 
                 CountFollowingsByID(userID),
                 postNumber,
-                likeNumber
+                likeNumber,
+                description
                 );
         }
 
@@ -292,6 +295,49 @@ namespace Services
             var user = users.ConvertAll(user => UserSendRequest.ToUserSendRequest(user));
 
             return user;
+        }
+
+        private string? GetUserDescription(Guid userID)
+        {
+            try
+            {
+                var user = _dbConnector.Users.FirstOrDefault(u => u.UserID == userID);
+                return user?.Description;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in Get User Description: {ex.Message}");
+                return "";
+            }
+        }
+
+        public void UpdateProfile(ProfileEditRequest profile)
+        {
+            try
+            {
+                var existingUser = _dbConnector.Users.Find(profile.userID);
+                if (existingUser != null)
+                {
+                    if (profile.Nickname != null)
+                    {
+                        existingUser.Nickname = profile.Nickname;
+                    }
+                    if (profile.ProfileImage != null)
+                    {
+                        existingUser.ProfileImage = profile.ProfileImage;
+                    }
+                    if (profile.Description != null)
+                    {
+                        existingUser.Description = profile.Description;
+                    }
+                }
+
+                _dbConnector.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in Update Profile: {ex.Message}");
+            }
         }
     }
 }

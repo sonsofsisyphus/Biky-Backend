@@ -18,9 +18,9 @@ namespace Services.DTO
         [Required]
         public int LikeNumber { get; set; }
 
+        public string Description { get; set; }
 
-
-        public ProfileSendRequest(UserSendRequest u, int follows, int followings, int posts, int likes)
+        public ProfileSendRequest(UserSendRequest u, int follows, int followings, int posts, int likes, string description)
         {
             UserID = u.UserID;
             Nickname = u.Nickname;
@@ -29,7 +29,7 @@ namespace Services.DTO
                 FollowingsNumber = followings;
                 PostNumber = posts;
             LikeNumber = likes;
+            Description = description;
         }
-
     }
 }
