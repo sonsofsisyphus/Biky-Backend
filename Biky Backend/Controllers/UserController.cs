@@ -90,7 +90,7 @@ namespace Biky_Backend.Controllers
             }
 
             // Generate Jwt
-            var token = _jwtProvider.Generate(user);
+            var token = new UserLoginSendRequest() { Token = _jwtProvider.Generate(user), UserID = user.UniversityID };
 
             // Return it
             return Ok(token);

@@ -89,7 +89,7 @@ namespace Biky_Backend.Controllers
 
         [HttpDelete]
         [Route("Delete")]
-        public IActionResult AddComment(Guid commentID)
+        public IActionResult RemoveComment(Guid commentID)
         {
             try
             {
