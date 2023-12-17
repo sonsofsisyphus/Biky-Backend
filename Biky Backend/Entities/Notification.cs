@@ -4,6 +4,13 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Entities
 {
+    public enum NotificationType
+    {
+        LIKE,
+        COMMENT,
+        FOLLOW
+    }
+
     public class Notification
     {
         [Key]
@@ -11,7 +18,7 @@ namespace Entities
 
         [ForeignKey("User")]
         public Guid ReceiverID { get; set; }
-        
+
         public virtual User Receiver { get; set; }
 
         public string Content { get; set; }

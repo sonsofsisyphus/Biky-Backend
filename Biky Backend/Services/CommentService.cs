@@ -30,12 +30,21 @@ namespace Services
             Comment comment = commentAddRequest.ToComment();
             if (ValidateComment(comment))
             {
-                _notificationService.AddNotification(new NotificationAddRequest()
+                var receiverID = _socialMediaPostService.ValidateID(comment.PostID)
+                    ? _socialMediaPostService.PostOwner(comment.PostID)
+                    : _salePostService.PostOwner(comment.PostID);
+
+                if (comment.AuthorID != receiverID)
                 {
-         
-                    ReceiverID = _socialMediaPostService.ValidateID(comment.PostID) ? _socialMediaPostService.PostOwner(comment.PostID) : _salePostService.PostOwner(comment.PostID),
-                    Content = $"{_userService.GetUserByID(comment.AuthorID).Nickname} has made a comment on your post"
-                });
+                    _notificationService.AddNotification(new NotificationAddRequest()
+                    {
+                        ReceiverID = receiverID,
+
+                        Content = _notificationService.GetNotificationContent(
+                        NotificationType.COMMENT, _userService.GetUserByID(comment.AuthorID).Nickname)
+                    });
+                }
+
                 _dbContext.Comments.Add(comment);
                 _dbContext.SaveChanges();
                 return comment.CommentID;
@@ -60,6 +69,15 @@ namespace Services
             {
                 _dbContext.Comments.Remove(existingComment);
                 _dbContext.SaveChanges();
+
+                _notificationService.DeleteNotification(
+                    _socialMediaPostService.ValidateID(existingComment.PostID) 
+                    ? _socialMediaPostService.PostOwner(existingComment.PostID) 
+                    : _salePostService.PostOwner(existingComment.PostID),
+
+                    _notificationService.GetNotificationContent(
+                        NotificationType.COMMENT, _userService.GetUserByID(existingComment.AuthorID).Nickname)
+                    );
             }
         }
 

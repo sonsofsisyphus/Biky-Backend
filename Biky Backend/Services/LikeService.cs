@@ -25,11 +25,16 @@ namespace Services
             {
                 if (ValidateLike(like) && !Exists(like))
                 {
-                    _notificationService.AddNotification(new NotificationAddRequest()
+                    var receiverID = _socialMediaPostService.PostOwner(like.PostID);
+
+                    if (receiverID != like.UserID)
                     {
-                        ReceiverID = _socialMediaPostService.PostOwner(like.PostID),
-                        Content = $"{_userService.GetUserByID(like.UserID).Nickname} has liked your post"
-                    });
+                        _notificationService.AddNotification(new NotificationAddRequest()
+                        {
+                            ReceiverID = _socialMediaPostService.PostOwner(like.PostID),
+                            Content = _notificationService.GetNotificationContent(NotificationType.LIKE, _userService.GetUserByID(like.UserID).Nickname)
+                        });
+                    }
 
                     _dbConnector.Likes.Add(like.ToLike());
                     _dbConnector.SaveChanges();
@@ -48,8 +53,16 @@ namespace Services
                 if (ValidateLike(like) && Exists(like))
                 {
                     var likeToRemove = _dbConnector.Likes.FirstOrDefault(l => (l.PostID == like.PostID && l.UserID == like.UserID));
-                    if (likeToRemove != null) _dbConnector.Remove(likeToRemove);
-                    _dbConnector.SaveChanges();
+                    if (likeToRemove != null)
+                    {
+                        _dbConnector.Remove(likeToRemove);
+                        _dbConnector.SaveChanges();
+
+                        _notificationService.DeleteNotification(
+                            _socialMediaPostService.PostOwner(like.PostID),
+                            _notificationService.GetNotificationContent(NotificationType.LIKE, _userService.GetUserByID(like.UserID).Nickname)
+                        );
+                    }
                 }
             }
             catch (Exception ex)
