@@ -1,50 +1,57 @@
+using Biky_Backend.ActionFilters;
+using Biky_Backend.Services;
 using Biky_Backend.Services.DTO;
-using Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services;
+using System.Security.Claims;
 
-[Route("chat")]
+[Route("Chat")]
 [ApiController]
 [Authorize]
 public class ChatController : ControllerBase
 {
     private readonly DBConnector _dbContext;
+    private readonly ChatService _chatService;
 
-    public ChatController(DBConnector dbContext)
+    public ChatController(DBConnector dbContext, ChatService chatService)
     {
         _dbContext = dbContext;
+        _chatService = chatService;
     }
 
     [HttpPost]
-    [Route("messages")]
+    [Route("GetMessages")]
+    [InjectUserId(typeof(ChatMessageSendRequest), "ReceiverID")]
     public IActionResult GetMessages([FromBody] ChatMessageSendRequest msg)
     {
-        var messages = _dbContext.ChatMessages
-            .Where(m => (
-                            m.ReceiverID == msg.recieverId && m.SenderID == msg.senderId
-                            ) || (
-                            m.ReceiverID == msg.senderId && m.SenderID == msg.recieverId
-                            )
-                )
-            .OrderBy(m => m.DateTime)
-            .ToList();
+        var messages = _chatService.GetMessages(msg);
         return Ok(messages);
     }
 
     [HttpPost]
-    [Route("send")]
-    public async Task<ActionResult<ChatMessage>> SendMessage([FromBody] ChatMessageAddRequest message)
+    [Route("Send")]
+    [InjectUserId(typeof(ChatMessageAddRequest), "SenderID")]
+    public IActionResult SendMessage([FromBody] ChatMessageAddRequest message)
     {
         if (message == null)
-        {
             return BadRequest();
-        }
 
-        var msg = message.ToMsg();
-        _dbContext.ChatMessages.Add(msg);
-        await _dbContext.SaveChangesAsync();
+        var msg = _chatService.SendMessage(message);
 
-        return CreatedAtAction(nameof(GetMessages),msg);
+        if (msg != null)
+            return CreatedAtAction(nameof(GetMessages), msg);
+        else
+            return BadRequest("Message cannot be sent");
+    }
+
+    [HttpGet]
+    [Route("GetAllChats")]
+    public IActionResult GetAllChats()
+    {
+        var currentUserID = new Guid(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+        var chatHistory = _chatService.GetAllChats(currentUserID);
+
+        return Ok(chatHistory);
     }
 }

@@ -3,7 +3,6 @@ using Entities;
 
 namespace Biky_Backend.Services.DTO
 {
-
     public class ChatMessageAddRequest
     {
         [Required] public Guid SenderID { get; set; }

@@ -33,6 +33,7 @@ builder.Services.AddTransient<FeedService>();
 builder.Services.AddTransient<CategoryService>();
 builder.Services.AddSignalR();
 builder.Services.AddScoped<ReportService>();
+builder.Services.AddScoped<ChatService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
