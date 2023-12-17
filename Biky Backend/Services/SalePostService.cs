@@ -123,7 +123,7 @@ namespace Services
         {
             try
             {
-                SalePost p = post.ToSalePost();
+                var p = post.ToSalePost();
                 _dbConnector.SalePosts.Add(p);
                 _dbConnector.SaveChanges();
                 if (post.Images != null)
@@ -133,6 +133,7 @@ namespace Services
                         _dbConnector.ImageCollections.Add(new ImageCollection(i, p.PostID));
                     }
                 }
+                _dbConnector.SaveChanges();
                 return p.PostID;
             }
             catch (Exception ex)

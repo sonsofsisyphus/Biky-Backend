@@ -365,3 +365,4 @@ FodyWeavers.xsd
 /Biky Backend/Migrations/
 /Biky Backend/sqlite3.db-shm
 /Biky Backend/sqlite3.db-wal
+/Biky Backend/wwwroot/Images
