@@ -2,9 +2,6 @@
 using Entities;
 using Microsoft.EntityFrameworkCore;
 using Services.DTO;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Services
 {
@@ -19,6 +16,7 @@ namespace Services
             _userService = userService;
         }
 
+        // Method to retrieve a sale post by its ID.
         public SalePost? GetPostByPostID(Guid postID)
         {
             try
@@ -32,6 +30,7 @@ namespace Services
             }
         }
 
+        // Method to retrieve all sale posts by a specific user.
         public List<SalePost> GetPostsByUserID(Guid userID)
         {
             try
@@ -46,6 +45,7 @@ namespace Services
             }
         }
 
+        // Method to retrieve all sale posts in the feed.
         public List<SalePost> GetAllFeed()
         {
             try
@@ -65,6 +65,7 @@ namespace Services
             }
         }
 
+        // Method to retrieve sale posts from users that the given user is following.
         public List<SalePost> GetFollowingsFeed(Guid userID)
         {
             try
@@ -83,6 +84,7 @@ namespace Services
             }
         }
 
+        // Method to retrieve sale posts based on filtering criteria.
         public List<SalePost> GetFilteredFeed(SaleFilter filters)
         {
             try
@@ -119,6 +121,7 @@ namespace Services
             }
         }
 
+        // Method to add a new sale post to the database.
         public Guid AddPost(SalePostAddRequest post)
         {
             try
@@ -143,6 +146,7 @@ namespace Services
             }
         }
 
+        // Method to update an existing sale post.
         public Guid? UpdatePost(SalePost salePost)
         {
             try
@@ -164,12 +168,12 @@ namespace Services
             }
             catch (Exception ex)
             {
-                
                 Console.WriteLine($"Error in UpdatePost: {ex.Message}");
                 return null;
             }
         }
 
+        // Method to remove a sale post by its ID.
         public bool RemovePost(Guid postID)
         {
             try
@@ -192,6 +196,7 @@ namespace Services
             }
         }
 
+        // Method to validate if a sale post with the given ID exists.
         public bool ValidateID(Guid postID)
         {
             try
@@ -204,6 +209,8 @@ namespace Services
                 return false;
             }
         }
+
+        // Method to get the owner (AuthorID) of a sale post by its ID.
         public Guid PostOwner(Guid postID)
         {
             try

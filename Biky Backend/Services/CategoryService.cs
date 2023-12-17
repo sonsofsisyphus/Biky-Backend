@@ -14,12 +14,13 @@ namespace Biky_Backend.Services
             _dbConnector = dbConnector;
         }
 
+        // Method to add a new category to the database.
         public void AddCategory(Category category)
         {
             try
             {
-                    _dbConnector.Categories.Add(category);
-                    _dbConnector.SaveChanges();
+                _dbConnector.Categories.Add(category);
+                _dbConnector.SaveChanges();
             }
             catch (Exception ex)
             {
@@ -27,12 +28,16 @@ namespace Biky_Backend.Services
             }
         }
 
+        // Method to retrieve all categories and their hierarchical structure.
         public CategorySendRequest GetCategories()
         {
             try
             {
+                // Retrieve the root category (e.g., "csrHead").
                 CategorySendRequest csrHead = CategorySendRequest.ToCategorySendRequest(_dbConnector.Categories.
                     FirstOrDefault(c=>c.CategoryID == 1));
+
+                // Fill the hierarchical structure with children categories.
                 FillChildren(csrHead);
                 return csrHead;
             }
@@ -42,6 +47,7 @@ namespace Biky_Backend.Services
             }
         }
 
+        // Recursive method to fill the children of a category.
         private void FillChildren(CategorySendRequest csr)
         {
             try
@@ -52,7 +58,7 @@ namespace Biky_Backend.Services
                          Categories.Where(c => c.ParentID == csr.CategoryID)
                          .Select(CategorySendRequest.ToCategorySendRequest).ToList();
                     foreach(var child in csr.Children) { 
-                    FillChildren(child);
+                        FillChildren(child);
                     }
                 }
                
@@ -69,6 +75,7 @@ namespace Biky_Backend.Services
             return _dbConnector.Categories.Any(c => c.ParentID == csr.CategoryID);
         }
 
+        // Method to retrieve category name by given id
         public string GetCategoryName(int id)
         {
             try

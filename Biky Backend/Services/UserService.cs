@@ -2,6 +2,8 @@
 using Entities;
 using Microsoft.EntityFrameworkCore;
 using Services.DTO;
+using System.Collections.Generic;
+using System;
 
 namespace Services
 {
@@ -16,6 +18,7 @@ namespace Services
             _notificationService = notificationService;
         }
 
+        // Method to retrieve a user by their ID.
         public UserSendRequest? GetUserByID(Guid userID)
         {
             try
@@ -30,6 +33,7 @@ namespace Services
             }
         }
 
+        // Method to retrieve a user by their nickname.
         public User? GetUserByNickname(string nickname)
         {
             try
@@ -43,6 +47,7 @@ namespace Services
             }
         }
 
+        // Method to retrieve a user's profile photo by their ID.
         public string GetUserPhoto(Guid userID)
         {
             try
@@ -61,6 +66,7 @@ namespace Services
             }
         }
 
+        // Method to get the followers of a user by their ID.
         public List<Guid> GetFollowersByID(Guid userID)
         {
             try
@@ -77,6 +83,7 @@ namespace Services
             }
         }
 
+        // Method to count the number of followers of a user by their ID.
         public int CountFollowersByID(Guid userID)
         {
             try
@@ -91,6 +98,7 @@ namespace Services
             }
         }
 
+        // Method to get the users followed by a user by their ID.
         public List<Guid> GetFollowingsByID(Guid userID)
         {
             try
@@ -107,6 +115,7 @@ namespace Services
             }
         }
 
+        // Method to count the number of users followed by a user by their ID.
         public int CountFollowingsByID(Guid userID)
         {
             try
@@ -121,6 +130,7 @@ namespace Services
             }
         }
 
+        // Method to add a new following relationship between users.
         public void AddFollowing(FollowRequest follow)
         {
             try
@@ -128,6 +138,8 @@ namespace Services
                 if (ValidateFollowing(follow))
                 {
                     var f = follow.ToFollow();
+
+                    // Send notification to the user being followed by.
                     _notificationService.AddNotification(new DTO.NotificationAddRequest()
                     {
                         ReceiverID = follow.FollowingID,
@@ -145,6 +157,7 @@ namespace Services
             }
         }
 
+        // Method to check if a following relationship already exists.
         public bool CheckFollowing(FollowRequest follow)
         {
             try
@@ -158,6 +171,7 @@ namespace Services
             }
         }
 
+        // Method to remove a following relationship between users.
         public void RemoveFollowing(FollowRequest follow)
         {
             try
@@ -172,6 +186,8 @@ namespace Services
                     {
                         _dbConnector.Follows.Remove(existingFollow);
                         _dbConnector.SaveChanges();
+
+                        // Delete existing notification from the user stopped being followed.
                         _notificationService.DeleteNotification(
                             existingFollow.FollowingID,
                             _notificationService.GetNotificationContent(NotificationType.FOLLOW, GetUserByID(existingFollow.FollowerID).Nickname)
@@ -185,6 +201,7 @@ namespace Services
             }
         }
 
+        // Method to validate a following relationship between users.
         public bool ValidateFollowing(FollowRequest follow)
         {
             try
@@ -223,6 +240,7 @@ namespace Services
             }
         }
 
+        // Method to validate a user's password.
         public bool ValidatePassword(Guid userID, string password)
         {
             try
@@ -237,6 +255,7 @@ namespace Services
             }
         }
 
+        // Method to validate a user's ID.
         public bool ValidateID(Guid userID)
         {
             try
@@ -250,6 +269,7 @@ namespace Services
             }
         }
 
+        // Method to register a new user.
         public bool Register(UserRegisterRequest request)
         {
             try
@@ -282,11 +302,13 @@ namespace Services
             }
         }
 
+        // Method to get a list of all users.
         public List<User> GetAllUsers()
         {
             return _dbConnector.Users.ToList();
         }
 
+        // Method to get a user's profile information by their ID.
         public ProfileSendRequest GetProfileByID(Guid userID)
         {
             List<Guid> allSocialMediaPosts = _dbConnector.SocialMediaPosts.Where(p => p.AuthorID == userID).Select(p => p.PostID).ToList();
@@ -302,12 +324,14 @@ namespace Services
                 );
         }
 
+        // Method to search for users by nickname.
         public List<UserSendRequest> searchUsersByNickname(string contains)
         {
             List<User>? users = getUsersByNicknameSearch(contains);
             return ConvertUserToSend(users);
         }
 
+        // Method to get a list of users by nickname search.
         public List<User> getUsersByNicknameSearch(string contains)
         {
             try
@@ -327,6 +351,7 @@ namespace Services
             }
         }
 
+        // Method to convert a list of User objects to UserSendRequest objects.
         private List<UserSendRequest> ConvertUserToSend(List<User> users)
         {
             var user = users.ConvertAll(user => UserSendRequest.ToUserSendRequest(user));
@@ -334,6 +359,7 @@ namespace Services
             return user;
         }
 
+        // Method to get a user's description by their ID.
         private string? GetUserDescription(Guid userID)
         {
             try
@@ -348,6 +374,7 @@ namespace Services
             }
         }
 
+        // Method to make changes in the profile.
         public void UpdateProfile(ProfileEditRequest profile)
         {
             try

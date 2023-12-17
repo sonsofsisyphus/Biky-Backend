@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Collections.Generic;
-using Entities;
+﻿using Entities;
 using Services.DTO;
 using Biky_Backend.Services.DTO;
 using Microsoft.EntityFrameworkCore;
@@ -25,6 +22,7 @@ namespace Services
             _notificationService = notificationService;
         }
 
+        // Method to add a new comment.
         public Guid? AddComment(CommentAddRequest commentAddRequest)
         {
             Comment comment = commentAddRequest.ToComment();
@@ -34,6 +32,7 @@ namespace Services
                     ? _socialMediaPostService.PostOwner(comment.PostID)
                     : _salePostService.PostOwner(comment.PostID);
 
+                // Do not send notification if user comments on their posts.
                 if (comment.AuthorID != receiverID)
                 {
                     _notificationService.AddNotification(new NotificationAddRequest()
@@ -52,6 +51,7 @@ namespace Services
             return null;
         }
 
+        // Method to edit an existing comment.
         public void EditComment(CommentEditRequest comment)
         {
             var existingComment = _dbContext.Comments.Find(comment.CommentID);
@@ -62,6 +62,7 @@ namespace Services
             }
         }
 
+        // Method to remove a comment.
         public void RemoveComment(Guid commentID)
         {
             var existingComment = _dbContext.Comments.Find(commentID);
@@ -70,6 +71,7 @@ namespace Services
                 _dbContext.Comments.Remove(existingComment);
                 _dbContext.SaveChanges();
 
+                // Delete the notification related to the removed comment.
                 _notificationService.DeleteNotification(
                     _socialMediaPostService.ValidateID(existingComment.PostID) 
                     ? _socialMediaPostService.PostOwner(existingComment.PostID) 
@@ -81,16 +83,19 @@ namespace Services
             }
         }
 
+        // Method to get comments associated with a specific post.
         public List<CommentSendRequest> GetCommentByPost(Guid postID)
         {
             return _dbContext.Comments.Where(a => a.PostID == postID).Include(c => c.Author).Select(CommentSendRequest.ToCommentSendRequest).ToList();
         }
 
+        // Method to get a comment by its ID.
         public Comment? GetCommentByID(Guid commentID)
         {
             return _dbContext.Comments.FirstOrDefault(a => a.CommentID == commentID);
         }
 
+        // Method to validate a comment before adding it.
         public bool ValidateComment(Comment comment)
         {
             if (!_userService.ValidateID(comment.AuthorID))

@@ -13,6 +13,7 @@ namespace Services
             _dbConnector = dbConnector;
         }
 
+        // Method to add a new notification to the database.
         public void AddNotification(NotificationAddRequest notification)
         {
             try
@@ -26,6 +27,7 @@ namespace Services
             }
         }
 
+        // Method to delete a specific notification by receiver ID and content.
         public void DeleteNotification(Guid receiverID, string content)
         {
             try
@@ -44,6 +46,7 @@ namespace Services
             }
         }
 
+        // Method to mark all notifications as seen for a specific user.
         public void SetAllSeen(Guid receiverID)
         {
             try
@@ -62,6 +65,7 @@ namespace Services
             }
         }
 
+        // Method to get the number of unseen notifications for a specific user.
         public int GetUnseenNotificationNumber(Guid receiverID)
         {
             try
@@ -74,6 +78,7 @@ namespace Services
             }
         }
 
+        // Method to get all notifications for a specific user.
         public List<NotificationSendRequest> GetAllNotifications(Guid receiverID)
         {
             try
@@ -88,6 +93,7 @@ namespace Services
             }
         }
 
+        // Method to get all unseen notifications for a specific user.
         public List<NotificationSendRequest> GetAllUnseenNotifications(Guid receiverID)
         {
             try
@@ -102,6 +108,7 @@ namespace Services
             }
         }
 
+        // Method to generate notification content based on the notification type and user nickname.
         public string GetNotificationContent(NotificationType type, string nickname)
         {
             return type switch
