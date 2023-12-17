@@ -47,7 +47,7 @@ namespace Services
         {
             try
             {
-                var s = _dbConnector.Users.FirstOrDefault(user => user.UserID == userID).ProfileImage;
+               var s = _dbConnector.Users.FirstOrDefault(user => user.UserID == userID).ProfileImage;
                 if(s == null)
                 {
                     return "";

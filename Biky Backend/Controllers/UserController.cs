@@ -8,6 +8,7 @@ using Biky_Backend.Services.DTO;
 using Biky_Backend.ActionFilters;
 using Biky_Backend.Services;
 using Entities;
+using System.Security.Claims;
 
 namespace Biky_Backend.Controllers
 {
@@ -34,10 +35,12 @@ namespace Biky_Backend.Controllers
             return Content(JsonConvert.SerializeObject(user), "application/json");
         }
 
+        [Authorize]
         [HttpGet]
         [Route("GetUserPhoto")]
-        public IActionResult GetUserPhoto(Guid userID)
+        public IActionResult GetUserPhoto()
         {
+            var userID = new Guid(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
             var user = _userService.GetUserPhoto(userID);
             return Content(JsonConvert.SerializeObject(user), "application/json");
         }
