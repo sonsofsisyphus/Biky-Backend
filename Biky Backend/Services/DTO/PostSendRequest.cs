@@ -15,8 +15,8 @@ namespace Services.DTO
 
         public List<String>? Images { get; set; }
 
-        //[Required]
-        public UserSendRequest? Author { get; set; }
+        [Required]
+        public UserSendRequest Author { get; set; }
 
         [Required]
         public DateTime PostTime { get; set; }

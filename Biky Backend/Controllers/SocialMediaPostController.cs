@@ -37,10 +37,20 @@ namespace Biky_Backend.Controllers
 
         [HttpGet]
         [Route("GetPostByUser")]
-        public IActionResult GetPostByAuthorID( Guid authorID)
+        public IActionResult GetPostByAuthorID([FromQuery] Guid authorID)
         {
-            List<SocialMediaPost> posts = _socialMediaPostService.GetPostByUserID(authorID);
-            return Ok(posts);
+            var userID = new Guid(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            try
+            {
+                List<SocialMediaPostSendRequest> posts = _feedService.GetSocialMediaUser(userID,
+                    authorID);
+                return Ok(posts);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting feed.");
+                return BadRequest();
+            }
         }
 
         [HttpPost]
@@ -114,7 +124,8 @@ namespace Biky_Backend.Controllers
         {
             try
             {
-                var result = _feedService.GetSocialMediaByContent(contains);
+                var userID = new Guid(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+                var result = _feedService.GetSocialMediaByContent(contains, userID);
                 if (result != null)
                     return Ok(result);
                 return NotFound();

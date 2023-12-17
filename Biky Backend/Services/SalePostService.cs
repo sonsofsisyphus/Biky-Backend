@@ -36,7 +36,7 @@ namespace Services
         {
             try
             {
-                return _dbConnector.SalePosts.Where(post => post.AuthorID == userID).ToList();
+                return _dbConnector.SalePosts.Where(post => post.AuthorID == userID).Include(p => p.Author).ToList();
             }
             catch (Exception ex)
             {

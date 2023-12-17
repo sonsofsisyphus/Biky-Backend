@@ -34,7 +34,7 @@ namespace Services
             try
             {
                 return _dbConnector.SocialMediaPosts
-                    .Where(post => post.AuthorID == userID)
+                    .Where(post => post.AuthorID == userID && !post.IsAnonymous).Include(p => p.Author)
                     .OrderByDescending(item => item.PostTime)
                     .ToList();
             }

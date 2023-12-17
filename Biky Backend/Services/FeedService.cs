@@ -83,10 +83,16 @@ namespace Biky_Backend.Services
             return ConvertSocialToSend(posts, userID);
         }
 
-        public List<SocialMediaPostSendRequest> GetSocialMediaByContent(string contains)
+        public List<SocialMediaPostSendRequest> GetSocialMediaByContent(string contains, Guid userID)
         {
             List<SocialMediaPost> posts = _socialMediaPostService.GetSearchedFeed(contains);
-            return ConvertSocialToSend(posts);
+            return ConvertSocialToSend(posts, userID);
+        }
+
+        public List<SocialMediaPostSendRequest> GetSocialMediaUser(Guid seeing, Guid profile)
+        {
+            List<SocialMediaPost> posts = _socialMediaPostService.GetPostByUserID(profile);
+            return ConvertSocialToSend(posts, seeing);
         }
 
         public List<SalePostSendRequest> GetSaleAll()
@@ -105,6 +111,13 @@ namespace Biky_Backend.Services
             List<SalePost>? posts = _salePostService.GetFilteredFeed(filters);
             return ConvertSaleToSend(posts);
         }
+
+        public List<SalePostSendRequest> GetSaleUser(Guid profile)
+        {
+            List<SalePost> posts = _salePostService.GetPostsByUserID(profile);
+            return ConvertSaleToSend(posts);
+        }
+
 
     }
 }

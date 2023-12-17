@@ -30,6 +30,15 @@ namespace Services.DTO
             ContentText = p.ContentText;
             Images = p.Images;
             if(!isAnonymous) Author = p.Author;
+            else
+            {
+                Author = new UserSendRequest()
+                {
+                    Nickname = "anonymous",
+                    ProfileImage = "",
+                    UserID = Guid.Empty
+                };
+            }
             PostTime = p.PostTime;
         }
     }

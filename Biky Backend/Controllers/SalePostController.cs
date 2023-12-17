@@ -49,7 +49,7 @@ namespace Biky_Backend.Controllers
         {
             try
             {
-                List<SalePost> posts = _salePostService.GetPostsByUserID(authorID);
+                List<SalePostSendRequest> posts = _feedService.GetSaleUser(authorID);
                 return Ok(posts);
             }
             catch (Exception ex)
