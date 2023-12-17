@@ -34,7 +34,7 @@ public class ChatController : ControllerBase
     [InjectUserId(typeof(ChatMessageAddRequest), "SenderID")]
     public IActionResult SendMessage([FromBody] ChatMessageAddRequest message)
     {
-        if (message == null)
+        if (message == null && message.Content == "")
             return BadRequest();
 
         var msg = _chatService.SendMessage(message);
@@ -43,6 +43,16 @@ public class ChatController : ControllerBase
             return CreatedAtAction(nameof(GetMessages), msg);
         else
             return BadRequest("Message cannot be sent");
+    }
+
+    [HttpGet]
+    [Route("OpenChat")]
+    [InjectUserId(typeof(ChatMessageSendRequest), "SenderID")]
+    public IActionResult OpenChat(Guid receiverID)
+    {
+        var currentUserID = new Guid(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+        _chatService.OpenChat(currentUserID, receiverID);
+        return Ok();
     }
 
     [HttpGet]

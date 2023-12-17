@@ -39,9 +39,9 @@ namespace Biky_Backend.Controllers
         [Route("GetPostByUser")]
         public IActionResult GetPostByAuthorID([FromQuery] Guid authorID)
         {
-            var userID = new Guid(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
             try
             {
+                var userID = new Guid(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
                 List<SocialMediaPostSendRequest> posts = _feedService.GetSocialMediaUser(userID,
                     authorID);
                 return Ok(posts);

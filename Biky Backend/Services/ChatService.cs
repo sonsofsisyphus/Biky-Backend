@@ -22,13 +22,29 @@ namespace Biky_Backend.Services
                             m.ReceiverID == msg.ReceiverID && m.SenderID == msg.SenderID
                             ) || (
                             m.ReceiverID == msg.SenderID && m.SenderID == msg.ReceiverID
-                            )
+                            ) && m.Content != ""
                 );
             var orderBy = where.OrderBy(m => m.DateTime);
             var toList = orderBy.ToList();
             var convertAll = toList.ConvertAll(m => ChatMessageRequest.ToChatMessageRequest(m));
 
             return convertAll;
+        }
+
+        public void OpenChat(Guid senderID, Guid receiverID)
+        {
+            if(!_dbContext.ChatMessages.Any(m => (m.ReceiverID == receiverID && m.SenderID == senderID
+                            ) || (
+                            m.ReceiverID == receiverID && m.SenderID == senderID
+                            )))
+            {
+                SendMessage(new ChatMessageAddRequest
+                {
+                    SenderID = senderID,
+                    ReceiverID = receiverID,
+                    Content = ""
+                });
+            }
         }
 
         public async Task<ChatMessage> SendMessage(ChatMessageAddRequest message)
