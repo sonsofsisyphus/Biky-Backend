@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 
 namespace Biky_Backend.Controllers
 {
+    // This controller handles operations related to image uploads.
     [ApiController]
     [Route("[controller]")]
     public class ImageController : ControllerBase
@@ -17,13 +18,17 @@ namespace Biky_Backend.Controllers
             _imageService = imageService;
         }
 
+        // Endpoint to upload an image file.
         [HttpPost]
         [Route("Upload")]
         public async Task<IActionResult> UploadImage(IFormFile file)
         {
             try
             {
+                // Call the ImageService to upload the image file.
                 var result = await _imageService.UploadFile(file);
+
+                // Serialize the result and return it as JSON.
                 return Content(JsonConvert.SerializeObject(result), "application/json");
             }
             catch (Exception ex)

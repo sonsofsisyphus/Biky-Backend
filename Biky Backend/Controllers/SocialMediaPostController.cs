@@ -1,6 +1,5 @@
 using Biky_Backend.ActionFilters;
 using Biky_Backend.Services;
-using Biky_Backend.Services.DTO;
 using Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,6 +9,7 @@ using System.Security.Claims;
 
 namespace Biky_Backend.Controllers
 {
+    // This controller handles operations related to social media posts and feeds.
     [ApiController]
     [Route("[controller]")]
     public class SocialMediaPostController : ControllerBase
@@ -25,6 +25,7 @@ namespace Biky_Backend.Controllers
             _feedService = feedService;
         }
 
+        // Endpoint to get a social media post by its unique ID.
         [HttpGet]
         [Route("GetPost")]
         public IActionResult GetPostByPostID(Guid postID)
@@ -35,6 +36,7 @@ namespace Biky_Backend.Controllers
             return NotFound("Post not found!");
         }
 
+        // Endpoint to get social media posts by the author's user ID.
         [HttpGet]
         [Route("GetPostByUser")]
         public IActionResult GetPostByAuthorID([FromQuery] Guid authorID)
@@ -53,6 +55,7 @@ namespace Biky_Backend.Controllers
             }
         }
 
+        // Endpoint to add a new social media post.
         [HttpPost]
         [Route("Add")]
         [InjectUserId(typeof(SocialMediaPostAddRequest), "AuthorID")]
@@ -64,6 +67,7 @@ namespace Biky_Backend.Controllers
             return BadRequest("Post cannot be added");
         }
 
+        // Endpoint to edit a social media post.
         [HttpPost]
         [Route("Edit")]
         public IActionResult EditPost([FromBody] SocialMediaPost socialMediaPost)
@@ -74,6 +78,7 @@ namespace Biky_Backend.Controllers
             return BadRequest("Post cannot be updated");
         }
 
+        // Endpoint to remove a social media post by its ID.
         [HttpDelete]
         [Route("Remove")]
         public IActionResult RemovePost(Guid postID)
@@ -84,6 +89,7 @@ namespace Biky_Backend.Controllers
             return NotFound();
         }
 
+        // Endpoint to get all social media posts in the feed.
         [HttpGet]
         [Route("GetAllFeed")]
         [Authorize]
@@ -96,6 +102,7 @@ namespace Biky_Backend.Controllers
             return BadRequest("Feed couldn't be retrieved");
         }
 
+        // Endpoint to get social media posts from users the current user is following.
         [HttpGet]
         [Route("GetFollowingsFeed")]
         [Authorize]
@@ -108,8 +115,10 @@ namespace Biky_Backend.Controllers
             return BadRequest("Feed couldn't be retrieved");
         }
 
+        // Endpoint to get social media posts for guests(unauthenticated users).
         [HttpGet]
         [Route("GetGuestFeed")]
+        [AllowAnonymous]
         public IActionResult GetGuestFeed()
         { 
             var result = _feedService.GetSocialMediaGuest();
@@ -118,6 +127,7 @@ namespace Biky_Backend.Controllers
             return BadRequest("Feed couldn't be retrieved");
         }
 
+        // Endpoint to get social media posts filtered by content.
         [HttpGet]
         [Route("GetFeedByContent")]
         public IActionResult GetFeedByContent(string contains)

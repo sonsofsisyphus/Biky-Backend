@@ -1,12 +1,11 @@
-﻿using Entities;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services;
-using Services.DTO;
 using System.Security.Claims;
 
 namespace Biky_Backend.Controllers
 {
+    // This controller handles operations related to user notifications.
     [ApiController]
     [Route("[controller]")]
     [Authorize]
@@ -21,6 +20,7 @@ namespace Biky_Backend.Controllers
             _notificationService = notificationService;
         }
 
+        // Endpoint to mark all notifications as seen for the current user.
         [HttpPost]
         [Route("SetAllSeen")]
         public IActionResult SetAllSeen()
@@ -37,6 +37,7 @@ namespace Biky_Backend.Controllers
             }
         }
 
+        // Endpoint to get the number of unseen notifications for the current user.
         [HttpGet]
         [Route("GetUnseen")]
         public IActionResult GetUnseenNotificationNumber()
@@ -53,6 +54,7 @@ namespace Biky_Backend.Controllers
             }
         }
 
+        // Endpoint to get all notifications for the current user.
         [HttpGet]
         [Route("GetAll")]
         public IActionResult GetAllNotifications()
@@ -69,6 +71,7 @@ namespace Biky_Backend.Controllers
             }
         }
 
+        // Endpoint to get all unseen notifications for the current user.
         [HttpGet]
         [Route("GetAllUnseen")]
         public IActionResult GetAllUnseenNotifications()

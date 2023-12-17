@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace Biky_Backend.Controllers
 {
+    // This controller handles operations related to sale posts.
     [ApiController]
     [Route("[controller]")]
     public class SalePostController : ControllerBase
@@ -25,6 +26,7 @@ namespace Biky_Backend.Controllers
             _feedService = feedService;
         }
 
+        // Endpoint to get a sale post by its unique ID.
         [HttpGet]
         [Route("GetPost")]
         public IActionResult GetPostByPostID([FromQuery] Guid postID)
@@ -43,6 +45,7 @@ namespace Biky_Backend.Controllers
             }
         }
 
+        // Endpoint to get sale posts by the author's user ID.
         [HttpGet]
         [Route("GetPostByUser")]
         public IActionResult GetPostByAuthorID([FromQuery] Guid authorID)
@@ -59,6 +62,7 @@ namespace Biky_Backend.Controllers
             }
         }
 
+        // Endpoint to add a new sale post.
         [HttpPost]
         [Route("Add")]
         [InjectUserId(typeof(SalePostAddRequest), "AuthorID")]
@@ -78,6 +82,7 @@ namespace Biky_Backend.Controllers
             }
         }
 
+        // Endpoint to edit a sale post.
         [HttpPost]
         [Route("Edit")]
         public IActionResult EditPost([FromBody] SalePost salePost)
@@ -96,6 +101,7 @@ namespace Biky_Backend.Controllers
             }
         }
 
+        // Endpoint to remove a sale post by its ID.
         [HttpDelete]
         [Route("Remove")]
         public IActionResult RemovePost(Guid postID)
@@ -114,6 +120,7 @@ namespace Biky_Backend.Controllers
             }
         }
 
+        // Endpoint to get all sale posts.
         [HttpGet]
         [Route("GetAll")]
         public IActionResult GetAllFeed()
@@ -132,6 +139,7 @@ namespace Biky_Backend.Controllers
             }
         }
 
+        // Endpoint to get sale posts from users the current user is following.
         [HttpGet]
         [Route("GetFollowings")]
         [Authorize]
@@ -152,6 +160,7 @@ namespace Biky_Backend.Controllers
             }
         }
 
+        // Endpoint to get sale posts filtered by specific criteria.
         [HttpPost]
         [Route("GetFiltered")]
         public IActionResult GetFilteredFeed([FromBody] SaleFilter filters)
