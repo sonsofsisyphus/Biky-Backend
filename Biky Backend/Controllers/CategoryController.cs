@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Biky_Backend.Services;
 using Entities;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace Biky_Backend.Controllers
 {
@@ -58,7 +59,8 @@ namespace Biky_Backend.Controllers
         {
             try
             {
-                return Ok(_categoryService.GetCategoryName(id));
+                var result = _categoryService.GetCategoryName(id);
+                return Ok(result);
             }
             catch (Exception ex)
             {
