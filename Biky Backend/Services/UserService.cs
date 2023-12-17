@@ -64,7 +64,7 @@ namespace Services
             try
             {
                 return _dbConnector.Follows
-                    .Count(a => a.FollowerID == userID);
+                    .Count(a => a.FollowingID == userID);
             }
             catch (Exception ex)
             {
@@ -94,7 +94,7 @@ namespace Services
             try
             {
                 return _dbConnector.Follows
-                    .Count(a => a.FollowingID == userID);
+                    .Count(a => a.FollowerID == userID);
             }
             catch (Exception ex)
             {
@@ -111,8 +111,8 @@ namespace Services
                 {
                     _notificationService.AddNotification(new DTO.NotificationAddRequest()
                     {
-                        ReceiverID = follow.FollowerID,
-                        Content = $"{GetUserByID(follow.FollowingID).Nickname} has followed you"
+                        ReceiverID = follow.FollowingID,
+                        Content = $"{GetUserByID(follow.FollowerID).Nickname} has followed you"
                     });
 
                     _dbConnector.Follows.Add(follow.ToFollow());

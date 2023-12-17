@@ -64,8 +64,7 @@ namespace Biky_Backend.Controllers
         [InjectUserId(typeof(FollowRequest), "FollowerID")]
         public IActionResult CheckFollowing([FromQuery] FollowRequest follow)
         {
-            _userService.CheckFollowing(follow);
-            return Content("", "application/json");
+            return Ok(_userService.CheckFollowing(follow));
         }
 
         [HttpDelete]

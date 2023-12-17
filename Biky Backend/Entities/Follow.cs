@@ -8,7 +8,7 @@ namespace Entities
     {
         [Key]
         public Guid FollowID { get; set; }
-
+        //FollowerID follows FollowingID
         [ForeignKey("User")]
         public Guid FollowerID { get; set; }
 
