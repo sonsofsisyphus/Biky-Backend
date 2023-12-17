@@ -53,7 +53,7 @@ namespace Biky_Backend.Controllers
 
         // Endpoint to retrieve the name of one category
         [HttpGet]
-        [Route("Get")]
+        [Route("GetName")]
         public IActionResult GetCategory(int id)
         {
             try
