@@ -93,6 +93,7 @@ namespace Biky_Backend.Controllers
         {
             try
             {
+
                 _commentService.RemoveComment(commentID);
                 return Ok();
             }

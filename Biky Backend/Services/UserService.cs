@@ -109,13 +109,15 @@ namespace Services
             {
                 if (ValidateFollowing(follow))
                 {
+                    var f = follow.ToFollow();
                     _notificationService.AddNotification(new DTO.NotificationAddRequest()
                     {
                         ReceiverID = follow.FollowingID,
-                        Content = $"{GetUserByID(follow.FollowerID).Nickname} has followed you"
+                        Content = _notificationService.GetNotificationContent(
+                            NotificationType.FOLLOW, GetUserByID(follow.FollowerID).Nickname)
                     });
 
-                    _dbConnector.Follows.Add(follow.ToFollow());
+                    _dbConnector.Follows.Add(f);
                     _dbConnector.SaveChanges();
                 }
             }
@@ -129,10 +131,7 @@ namespace Services
         {
             try
             {
-
-                    return _dbConnector.Follows.Any(f => follow.FollowingID == f.FollowingID && follow.FollowerID == f.FollowerID);
-                    
-                
+                return _dbConnector.Follows.Any(f => follow.FollowingID == f.FollowingID && follow.FollowerID == f.FollowerID);
             }
             catch (Exception ex)
             {
@@ -155,6 +154,10 @@ namespace Services
                     {
                         _dbConnector.Follows.Remove(existingFollow);
                         _dbConnector.SaveChanges();
+                        _notificationService.DeleteNotification(
+                            existingFollow.FollowingID,
+                            _notificationService.GetNotificationContent(NotificationType.FOLLOW, GetUserByID(existingFollow.FollowerID).Nickname)
+                            );
                     }
                 }
             }
