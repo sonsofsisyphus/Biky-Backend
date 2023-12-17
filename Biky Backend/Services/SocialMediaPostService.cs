@@ -16,6 +16,7 @@ namespace Services
             _userService = userService ?? throw new ArgumentNullException(nameof(userService));
         }
 
+        // Method to retrieve a social media post by its ID.
         public SocialMediaPost? GetPostByPostID(Guid postID)
         {
             try
@@ -29,6 +30,7 @@ namespace Services
             }
         }
 
+        // Method to retrieve all social media posts by a specific user (excluding anonymous posts).
         public List<SocialMediaPost> GetPostByUserID(Guid userID)
         {
             try
@@ -45,6 +47,7 @@ namespace Services
             }
         }
 
+        // Method to retrieve all social media posts in the feed.
         public List<SocialMediaPost> GetAllFeed()
         {
             try
@@ -64,6 +67,7 @@ namespace Services
             }
         }
 
+        // Method to retrieve social media posts from users that the given user is following (excluding anonymous posts).
         public List<SocialMediaPost> GetFollowingsFeed(Guid userID)
         {
             try
@@ -82,6 +86,7 @@ namespace Services
             }
         }
 
+        // Method to add a new social media post to the database.
         public Guid AddPost(SocialMediaPostAddRequest post)
         {
             try
@@ -107,6 +112,7 @@ namespace Services
             }
         }
 
+        // Method to update an existing social media post.
         public Guid? UpdatePost(SocialMediaPost updatedPost)
         {
             try
@@ -131,6 +137,7 @@ namespace Services
             }
         }
 
+        // Method to remove a social media post by its ID.
         public bool RemovePost(Guid postID)
         {
             try
@@ -152,6 +159,7 @@ namespace Services
             }
         }
 
+        // Method to validate if a social media post with the given ID exists.
         public bool ValidateID(Guid postID)
         {
             try
@@ -165,6 +173,7 @@ namespace Services
             }
         }
 
+        // Method to get the owner (AuthorID) of a social media post by its ID.
         public Guid PostOwner(Guid postID)
         {
             try
@@ -179,6 +188,7 @@ namespace Services
             }
         }
 
+        // Method to search for social media posts that contain a specific text in their content.
         public List<SocialMediaPost> GetSearchedFeed(string contains)
         {
             try

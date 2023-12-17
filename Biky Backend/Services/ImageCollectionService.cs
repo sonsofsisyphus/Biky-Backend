@@ -11,6 +11,7 @@ namespace Biky_Backend.Services
             _dbConnector = dbConnector;
         }
 
+        // Method to retrieve a list of image URLs associated with a specific post.
         public List<String>? GetImagesByPost(Guid postID)
         {
             return _dbConnector.ImageCollections.Where(i => i.PostID == postID).Select(i => i.Image).ToList();

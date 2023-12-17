@@ -13,6 +13,7 @@ namespace Biky_Backend.Services
             _dbContext = dbContext;
         }
 
+        // Method to add a new report to the database.
         public Guid AddReport(ReportAddRequest report)
         {
             try
@@ -32,15 +33,18 @@ namespace Biky_Backend.Services
             }
         }
 
+        // Method to retrieve a report by its ID.
         public Report? GetReportByID(Guid reportID)
         {
             return _dbContext.Reports.FirstOrDefault(r => r.ReportID == reportID);
         }
 
+        // Private method to validate a report before adding it to the database.
         private bool ValidateReport(ReportAddRequest report)
         {
             try
             {
+                // Check if the reported entity (comment, user profile, post) exists.
                 var reportedExists = report.ReportType switch
                 {
                     ReportType.COMMENT => _dbContext.Comments.Any(c => c.CommentID == report.ReportedID),
@@ -48,6 +52,8 @@ namespace Biky_Backend.Services
                     ReportType.POST => _dbContext.Posts.Any(p => p.PostID == report.ReportedID),
                     _ => false
                 };
+
+                // Check if a similar report already exists for the same author and reported entity.
                 var reportExists = _dbContext.Reports.Any(r =>
                     r.AuthorID == report.AuthorID && r.ReportedID == report.ReportedID);
 
@@ -69,11 +75,13 @@ namespace Biky_Backend.Services
             }
         }
 
+        // Method to retrieve a list of reports and convert them to ReportSendRequest objects.
         public List<ReportSendRequest> GetReports()
         {
             return _dbContext.Reports.Select(ReportSendRequest.ToReportSendRequest).ToList();
         }
 
+        // Method to close a report and set the report response.
         public void CloseReport(ReportCloseRequest report)
         {
             try

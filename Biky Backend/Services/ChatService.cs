@@ -15,8 +15,14 @@ namespace Biky_Backend.Services
             _userService = userService;
         }
 
+        // Method to get messages between two users.
         public List<ChatMessageRequest>? GetMessages(ChatMessageSendRequest msg)
         {
+            /*
+            Since all chats include 2 people texting each other, receiver and sender ID changes
+            depending on who sent the message. Therefore, all messages in a chat have the same
+            receiver and sender IDs although they can be swapped in some other messages.
+             */
             var where = _dbContext.ChatMessages
             .Where(m => (
                             m.ReceiverID == msg.ReceiverID && m.SenderID == msg.SenderID
@@ -31,6 +37,7 @@ namespace Biky_Backend.Services
             return convertAll;
         }
 
+        // Method to open a chat between two users if it doesn't already exist.
         public void OpenChat(Guid senderID, Guid receiverID)
         {
             if(!_dbContext.ChatMessages.Any(m => (m.ReceiverID == receiverID && m.SenderID == senderID
@@ -47,6 +54,7 @@ namespace Biky_Backend.Services
             }
         }
 
+        // Method to send a chat message.
         public async Task<ChatMessage> SendMessage(ChatMessageAddRequest message)
         {
             try
@@ -64,6 +72,7 @@ namespace Biky_Backend.Services
             }
         }
 
+        // Method to get all chat history for a user.
         public List<ChatHistorySendRequest> GetAllChats(Guid currentUserID)
         {
             var allDistintUsers = _dbContext.ChatMessages
@@ -81,6 +90,7 @@ namespace Biky_Backend.Services
             return allChats;
         }
 
+        // Helper method to get the last message in a chat between two users to show on chat screen.
         private ChatMessageRequest GetLastMessage(Guid firstUser, Guid secondUser)
         {
             var lastMessage = _dbContext.ChatMessages

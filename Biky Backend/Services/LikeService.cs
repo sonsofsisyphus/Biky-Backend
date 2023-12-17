@@ -19,6 +19,7 @@ namespace Services
             _notificationService = notificationService;
         }
 
+        // Method to add a new like to a post.
         public void AddLike(LikeRequest like)
         {
             try
@@ -27,6 +28,7 @@ namespace Services
                 {
                     var receiverID = _socialMediaPostService.PostOwner(like.PostID);
 
+                    // Add a notification for the post owner when someone other than themselves likes their post.
                     if (receiverID != like.UserID)
                     {
                         _notificationService.AddNotification(new NotificationAddRequest()
@@ -46,6 +48,7 @@ namespace Services
             }
         }
 
+        // Method to remove a like from a post.
         public void RemoveLike(LikeRequest like)
         {
             try
@@ -58,6 +61,7 @@ namespace Services
                         _dbConnector.Remove(likeToRemove);
                         _dbConnector.SaveChanges();
 
+                        // Delete the notification related to this like.
                         _notificationService.DeleteNotification(
                             _socialMediaPostService.PostOwner(like.PostID),
                             _notificationService.GetNotificationContent(NotificationType.LIKE, _userService.GetUserByID(like.UserID).Nickname)
@@ -71,6 +75,7 @@ namespace Services
             }
         }
 
+        // Method to validate if the like request is valid.
         public bool ValidateLike(LikeRequest like)
         {
             try
@@ -91,6 +96,7 @@ namespace Services
             }
         }
 
+        // Method to check if a like already exists for a post by a user.
         public bool Exists(LikeRequest like)
         {
             try
@@ -103,6 +109,7 @@ namespace Services
             }
         }
 
+        // Method to count the total number of likes for a post.
         public int CountLike(Guid postID)
         {
             return _dbConnector.Likes.Count(l => l.PostID == postID);
