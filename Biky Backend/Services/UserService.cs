@@ -43,6 +43,24 @@ namespace Services
             }
         }
 
+        public string GetUserPhoto(Guid userID)
+        {
+            try
+            {
+                var s = _dbConnector.Users.FirstOrDefault(user => user.UserID == userID).ProfileImage;
+                if(s == null)
+                {
+                    return "";
+                }
+                return  s;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in GetUserByNickname: {ex.Message}");
+                return null;
+            }
+        }
+
         public List<Guid> GetFollowersByID(Guid userID)
         {
             try

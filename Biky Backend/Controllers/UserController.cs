@@ -35,6 +35,14 @@ namespace Biky_Backend.Controllers
         }
 
         [HttpGet]
+        [Route("GetUserPhoto")]
+        public IActionResult GetUserPhoto(Guid userID)
+        {
+            var user = _userService.GetUserPhoto(userID);
+            return Content(JsonConvert.SerializeObject(user), "application/json");
+        }
+
+        [HttpGet]
         [Route("GetFollowers")]
         public IActionResult GetFollowersByID(Guid userID)
         {
