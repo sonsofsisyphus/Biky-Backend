@@ -12,6 +12,7 @@ using System.Security.Claims;
 
 namespace Biky_Backend.Controllers
 {
+    // This controller handles operations related to user profiles and authentication.
     [ApiController]
     [Route("[controller]")]
     public class UserController : ControllerBase
@@ -27,6 +28,7 @@ namespace Biky_Backend.Controllers
             _jwtProvider = jwtProvider;
         }
 
+        // Endpoint to get a user by their unique ID.
         [HttpGet]
         [Route("GetUser")]
         public IActionResult GetUserByID(Guid userID)
@@ -45,6 +47,7 @@ namespace Biky_Backend.Controllers
             return Content(JsonConvert.SerializeObject(user), "application/json");
         }
 
+        // Endpoint to get followers of a user by their user ID.
         [HttpGet]
         [Route("GetFollowers")]
         public IActionResult GetFollowersByID(Guid userID)
@@ -53,6 +56,7 @@ namespace Biky_Backend.Controllers
             return Content(JsonConvert.SerializeObject(followers), "application/json");
         }
 
+        // Endpoint to get users that a user is following by their user ID.
         [HttpGet]
         [Route("GetFollowings")]
         public IActionResult GetFollowingsByID(Guid userID)
@@ -61,6 +65,7 @@ namespace Biky_Backend.Controllers
             return Content(JsonConvert.SerializeObject(followings), "application/json");
         }
 
+        // Endpoint to add a user to the current user's following list.
         [HttpGet]
         [Route("AddFollowing")]
         [InjectUserId(typeof(FollowRequest), "FollowerID")]
@@ -70,6 +75,7 @@ namespace Biky_Backend.Controllers
             return Content("", "application/json");
         }
 
+        // Endpoint to check if a user is followed by the current user.
         [HttpGet]
         [Route("CheckFollowing")]
         [InjectUserId(typeof(FollowRequest), "FollowerID")]
@@ -78,6 +84,7 @@ namespace Biky_Backend.Controllers
             return Ok(_userService.CheckFollowing(follow));
         }
 
+        // Endpoint to remove a user from the current user's following list.
         [HttpDelete]
         [Route("DeleteFollowing")]
         [InjectUserId(typeof(FollowRequest), "FollowerID")]
@@ -87,6 +94,7 @@ namespace Biky_Backend.Controllers
             return Content("", "application/json");
         }
 
+        // Endpoint for user login.
         [AllowAnonymous]
         [HttpPost]
         [Route("Login")]
@@ -125,6 +133,7 @@ namespace Biky_Backend.Controllers
             return Ok(token);
         }
 
+        // Endpoint for user registration.
         [AllowAnonymous]
         [HttpPost]
         [Route("Register")]
@@ -159,6 +168,7 @@ namespace Biky_Backend.Controllers
             return Ok(new AuthResult() { Result = true });
         }
 
+        // Endpoint to get all users.
         [HttpGet]
         [Route("GetAllUsers")]
         public IActionResult GetAllUsers()
@@ -166,6 +176,7 @@ namespace Biky_Backend.Controllers
             return Ok(_userService.GetAllUsers());
         }
 
+        // Endpoint to get a user's profile by their user ID.
         [HttpGet]
         [Route("GetProfile")]
         public IActionResult GetProfile(Guid userID)
@@ -183,6 +194,7 @@ namespace Biky_Backend.Controllers
             }
         }
 
+        // Endpoint to update a user's profile.
         [HttpGet]
         [Route("UpdateProfile")]
         [InjectUserId(typeof(ProfileEditRequest), "userID")]
@@ -200,6 +212,7 @@ namespace Biky_Backend.Controllers
             }
         }
 
+        // Endpoint to search for users by their nickname.
         [HttpGet]
         [Route("SearchUser")]
         public IActionResult SearchUsersByNickname(string contains)

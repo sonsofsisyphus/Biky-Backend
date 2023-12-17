@@ -4,8 +4,10 @@ using System.Security.Claims;
 
 namespace Biky_Backend.ActionFilters
 {
+    //This class is responsible for injecting the user ID into the action method's parameters.
     public class UserIdInjectionFilter : IActionFilter
     {
+        // This method is called before the action method is executed.
         public void OnActionExecuting(ActionExecutingContext context)
         {
             var attribute = (context.ActionDescriptor as ControllerActionDescriptor)
@@ -14,6 +16,7 @@ namespace Biky_Backend.ActionFilters
 
             if (attribute != null)
             {
+                // Retrieve the user ID from the current user's claims.
                 var userId = context.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 if (string.IsNullOrEmpty(userId))
                     return;

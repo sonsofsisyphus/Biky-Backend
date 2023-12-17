@@ -5,6 +5,7 @@ using Services.DTO;
 
 namespace Biky_Backend.Controllers
 {
+    // This controller handles operations related to comments.
     [ApiController]
     [Route("[controller]")]
     public class CommentController : ControllerBase
@@ -18,6 +19,7 @@ namespace Biky_Backend.Controllers
             _commentService = commentService;
         }
 
+        // Endpoint to add a new comment.
         [HttpPost]
         [Route("Add")]
         [InjectUserId(typeof(CommentAddRequest), "AuthorID")]
@@ -37,6 +39,7 @@ namespace Biky_Backend.Controllers
             }
         }
 
+        // Endpoint to edit an existing comment.
         [HttpPost]
         [Route("Edit")]
         public IActionResult EditComment([FromBody] CommentEditRequest comment)
@@ -53,6 +56,7 @@ namespace Biky_Backend.Controllers
             }
         }
 
+        // Endpoint to retrieve a comment by its unique ID.
         [HttpGet]
         [Route("GetByID")]
         public IActionResult GetCommentByID( Guid commentID)
@@ -71,6 +75,7 @@ namespace Biky_Backend.Controllers
             }
         }
 
+        // Endpoint to retrieve comments associated with a specific post.
         [HttpGet]
         [Route("GetByPost")]
         public IActionResult GetCommentByPost(Guid postID)
@@ -87,13 +92,13 @@ namespace Biky_Backend.Controllers
             }
         }
 
+        // Endpoint to remove a comment by its unique ID.
         [HttpDelete]
         [Route("Delete")]
         public IActionResult RemoveComment(Guid commentID)
         {
             try
             {
-
                 _commentService.RemoveComment(commentID);
                 return Ok();
             }

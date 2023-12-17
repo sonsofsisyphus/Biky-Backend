@@ -7,6 +7,7 @@ using Biky_Backend.ActionFilters;
 
 namespace Biky_Backend.Controllers
 {
+    // This controller handles operations related to social media post likes.
     [ApiController]
     [Route("[controller]")]
     public class LikeController : ControllerBase
@@ -20,6 +21,7 @@ namespace Biky_Backend.Controllers
             _likeService = likeService;
         }
 
+        // Endpoint to add like.
         [HttpPost]
         [Route("Add")]
         [InjectUserId(typeof(LikeRequest), "UserID")]
@@ -37,6 +39,7 @@ namespace Biky_Backend.Controllers
             }
         }
 
+        // Endpoint to remove a like.
         [HttpPost]
         [Route("Remove")]
         [InjectUserId(typeof(LikeRequest), "UserID")]
@@ -54,6 +57,7 @@ namespace Biky_Backend.Controllers
             }
         }
 
+        // Endpoint to check if a like exists.
         [HttpGet]
         [Route("Exists")]
         public IActionResult LikeExists(LikeRequest like)

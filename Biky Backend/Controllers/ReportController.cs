@@ -1,13 +1,11 @@
 ﻿using Biky_Backend.ActionFilters;
 using Biky_Backend.Services;
 using Biky_Backend.Services.DTO;
-using Entities;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Services;
 
 namespace Biky_Backend.Controllers
 {
+    // This controller handles operations related to reports.
     [ApiController]
     [Route("[controller]")]
     public class ReportController : ControllerBase
@@ -21,6 +19,7 @@ namespace Biky_Backend.Controllers
             _reportService = reportService;
         }
 
+        // Endpoint to add a report.
         [HttpPost]
         [Route("Add")]
         [InjectUserId(typeof(ReportAddRequest), "AuthorID")]
@@ -40,6 +39,7 @@ namespace Biky_Backend.Controllers
             }
         }
 
+        // Endpoint to get a report by its unique ID.
         [HttpGet]
         [Route("GetByID")]
         public IActionResult GetReportByID(Guid reportID)
@@ -58,6 +58,7 @@ namespace Biky_Backend.Controllers
             }
         }
 
+        // Endpoint to get all reports.
         [HttpGet]
         [Route("GetReports")]
         public IActionResult GetReports()
@@ -74,6 +75,7 @@ namespace Biky_Backend.Controllers
             }
         }
 
+        // Endpoint to close a report.
         [HttpPost]
         [Route("Close")]
         //[Authorize(Roles = "Admin")]

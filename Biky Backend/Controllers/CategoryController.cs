@@ -1,8 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using Services;
-using Newtonsoft.Json;
 using Biky_Backend.Services;
-using Biky_Backend.Services.DTO;
 using Entities;
 
 namespace Biky_Backend.Controllers
@@ -20,6 +17,7 @@ namespace Biky_Backend.Controllers
             _categoryService = categoryService;
         }
 
+        // Endpoint to add a new category to the system.
         [HttpPost]
         [Route("Add")]
         public IActionResult AddCategory([FromBody] Category category)
@@ -36,6 +34,7 @@ namespace Biky_Backend.Controllers
             }
         }
 
+        // Endpoint to retrieve a list of categories.
         [HttpGet]
         [Route("Get")]
         public IActionResult GetCategories()
@@ -50,7 +49,5 @@ namespace Biky_Backend.Controllers
                 return BadRequest("Error adding category.");
             }
         }
-
-
     }
 }

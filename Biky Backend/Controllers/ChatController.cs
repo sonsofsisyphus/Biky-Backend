@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Services;
 using System.Security.Claims;
 
+// This controller handles operations related to chat functionality.
 [Route("Chat")]
 [ApiController]
 [Authorize]
@@ -20,6 +21,7 @@ public class ChatController : ControllerBase
         _chatService = chatService;
     }
 
+    // Endpoint to retrieve chat messages for a specified user.
     [HttpPost]
     [Route("GetMessages")]
     [InjectUserId(typeof(ChatMessageSendRequest), "ReceiverID")]
@@ -29,11 +31,13 @@ public class ChatController : ControllerBase
         return Ok(messages);
     }
 
+    // Endpoint to send a chat message.
     [HttpPost]
     [Route("Send")]
     [InjectUserId(typeof(ChatMessageAddRequest), "SenderID")]
     public IActionResult SendMessage([FromBody] ChatMessageAddRequest message)
     {
+        // Check if the provided message is valid.
         if (message == null && message.Content == "")
             return BadRequest();
 
@@ -45,6 +49,7 @@ public class ChatController : ControllerBase
             return BadRequest("Message cannot be sent");
     }
 
+    // Endpoint to open a chat with a specified receiver.
     [HttpGet]
     [Route("OpenChat")]
     [InjectUserId(typeof(ChatMessageSendRequest), "SenderID")]
@@ -55,6 +60,7 @@ public class ChatController : ControllerBase
         return Ok();
     }
 
+    // Endpoint to retrieve all chat histories for the current user.
     [HttpGet]
     [Route("GetAllChats")]
     public IActionResult GetAllChats()
