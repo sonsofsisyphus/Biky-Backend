@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Biky_Backend.Services;
 using Entities;
+using System.Collections.Generic;
 
 namespace Biky_Backend.Controllers
 {
@@ -42,6 +43,22 @@ namespace Biky_Backend.Controllers
             try
             {
                 return Ok(_categoryService.GetCategories());
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error adding category.");
+                return BadRequest("Error adding category.");
+            }
+        }
+
+        // Endpoint to retrieve the name of one category
+        [HttpGet]
+        [Route("Get")]
+        public IActionResult GetCategory(int id)
+        {
+            try
+            {
+                return Ok(_categoryService.GetCategoryName(id));
             }
             catch (Exception ex)
             {

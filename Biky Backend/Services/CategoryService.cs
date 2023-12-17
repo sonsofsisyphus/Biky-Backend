@@ -69,5 +69,19 @@ namespace Biky_Backend.Services
             return _dbConnector.Categories.Any(c => c.ParentID == csr.CategoryID);
         }
 
+        public string GetCategoryName(int id)
+        {
+            try
+            {
+                string s = _dbConnector.Categories.FirstOrDefault(c => c.CategoryID == id).Name;
+                return s;
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("Error getting category.", ex);
+                return "";
+            }
+        }
+
     }
 }
