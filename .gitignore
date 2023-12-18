@@ -361,8 +361,3 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
-/Biky Backend/sqlite3.db
-/Biky Backend/Migrations/
-/Biky Backend/sqlite3.db-shm
-/Biky Backend/sqlite3.db-wal
-/Biky Backend/wwwroot/Images
