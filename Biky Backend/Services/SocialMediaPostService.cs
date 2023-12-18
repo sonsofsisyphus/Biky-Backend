@@ -72,7 +72,7 @@ namespace Services
         {
             try
             {
-                List<Guid> followings = _userService.GetFollowingsByID(userID);
+                List<Guid> followings = _userService.GetFollowersByID(userID);
                 return _dbConnector.SocialMediaPosts
                     .Where(item => followings.Contains(item.AuthorID) && !item.IsAnonymous)
                     .Include(p => p.Author)
